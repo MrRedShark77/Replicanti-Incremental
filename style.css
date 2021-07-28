@@ -1,0 +1,209 @@
+@font-face {
+	font-family: 'MonoType';
+	src: url('MonospaceTypewriter.ttf');
+}
+
+* {
+    font-family: MonoType, monospace;
+    table-align: center;
+	text-align: center;
+}
+
+body {
+    color: black;
+    background-color: white;
+	overflow-x: hidden;
+	font-size: 11px;
+	color: #727272;
+	margin: 0;
+}
+
+table, tr {
+    display: flex;
+    justify-content: center;
+}
+
+button {
+    border: solid 3px black;
+	color: black;
+    background-color: white;
+    font-size: 10px;
+	cursor: pointer;
+}
+
+.btn {
+	cursor: pointer;
+	background-color: #fafafa;
+	color: black;
+	font-size: 10px;
+	max-width: 250px;
+	padding: 7px 25px;
+	text-decoration: none;
+	transition-duration: 0.5s;
+}
+
+.btn.upg {
+	width: 250px;
+	min-height: 125px;
+}
+
+.tab_btn {
+	cursor: pointer;
+	background-color: #fafafa;
+	color: black;
+	font-size: 15px;
+	width: 100%;
+	height: 50px;
+	text-decoration: none;
+	transition-duration: 0.5s;
+}
+
+.tab_btn:hover {
+	background-color: white;
+}
+
+.btn.prestige,
+.tab_btn.prestige {
+	color: #483bff;
+}
+
+.btn.prestige:not(.locked):hover,
+.tab_btn.prestige:hover {
+	color: #cfccff;
+	background-color: #483bff;
+}
+
+.btn.inf,
+.tab_btn.inf {
+	color: #ffaa2b;
+}
+
+.btn.inf:not(.locked):hover,
+.tab_btn.inf:hover {
+	color: #000000;
+	background-color: #ffaa2b;
+}
+
+.btn.eter,
+.tab_btn.eter {
+	color: #c800f0;
+}
+
+.btn.eter:not(.locked):hover,
+.tab_btn.eter:hover {
+	color: #ffffff;
+	background-color: #c800f0;
+}
+
+.btn:not(.locked):hover {
+	transform: scale(1.15);
+}
+
+.btn.locked {
+	cursor: default;
+	background-color: lightgray;
+	color: black;
+}
+
+.btn.bought {
+	cursor: default;
+	background-color: #5ac467;
+	color: black;
+}
+
+h1 {
+    display: inline;
+	font-weight: normal;
+	color: black;
+    font-size: 35px;
+}
+
+h2 {
+	display: inline;
+	font-weight: normal;
+	color: black;
+    font-size: 25px;
+}
+
+h3 {
+	display: inline;
+	font-weight: bold;
+	color: black;
+    font-size: 15px;
+}
+
+.table_center {
+    display: flex;
+    justify-content: center;
+    flex-flow: row wrap;
+}
+
+.main_tab {
+	width: 250px;
+	height: 100%;
+	background: lightgrey;
+}
+
+[tooltip] {
+	position: relative;
+	z-index: 2;
+	white-space: pre-wrap;
+}
+
+[tooltip]:before,
+[tooltip]:after {
+	visibility: hidden;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+	opacity: 0;
+	pointer-events: none;
+	white-space: pre-wrap;
+}
+
+[tooltip]:before {
+	position: absolute;
+	bottom: 100%;
+	left: 50%;
+	margin-bottom: 5px;
+	margin-left: -160px;
+	padding: 7px;
+	width: 320px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	background-color: #000;
+	background-color: hsla(0, 0%, 5%, 0.9);
+	color: #fff;
+	content: attr(tooltip);
+	text-align: center;
+	font-size: 14px;
+	line-height: 1.2;
+	transition-duration: 0.5s;
+	white-space: pre-wrap;
+}
+
+[tooltip]:after {
+	position: absolute;
+	bottom: 100%;
+	left: 50%;
+	margin-left: -5px;
+	width: 0;
+	border-top: 5px solid #000;
+	border-top: 5px solid hsla(0, 0%, 5%, 0.9);
+	border-right: 5px solid transparent;
+	border-left: 5px solid transparent;
+	content: " ";
+	font-size: 0;
+	line-height: 0;
+	transition-duration: 0.5s;
+	white-space: pre-wrap;
+}
+
+[tooltip]:hover:before,
+[tooltip]:hover:after {
+	visibility: visible;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+	opacity: 1;
+	white-space: pre-wrap;
+}

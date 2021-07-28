@@ -1,0 +1,145 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="js/ExpantaNum.js"></script>
+    <script src="js/saves.js"></script>
+    <script src="js/tabs.js"></script>
+    <script src="js/upgrades.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/v.js"></script>
+
+    <title>Replicanti Incremental</title>
+</head>
+<body onload="loadGame()">
+    <div id='app'>
+        <div class='table_center' style="justify-content: space-between; height: 100%;">
+            <div class='main_tab'>
+                <div v-for="x in TABS[1].length" v-if="TABS[1][x-1].unl ? TABS[1][x-1].unl() : true">
+                    <button class='tab_btn' v-bind:class="{[TABS[1][x-1].style ? TABS[1][x-1].style : 'normal']: true}" @click="TABS.choose(x-1)">
+                        {{ FORMS.secretMessage(TABS[1][x-1].id, TABS[1][x-1].seen ? TABS[1][x-1].seen() : true) }}
+                    </button>
+                </div>
+            </div>
+            <div style="width: calc(100% - 500px); height: 100%; overflow-y: auto;">
+                You have <h2>{{ format(player.replicanti) }}</h2> replicanti<br>
+                ({{ format(FORMS.replicanti.growth()) }}x/s)<br>
+                (+{{ format(FORMS.calc_OoM(FORMS.replicanti.growth())) }} OoMs/s)<br><br><div style="height: 45px">
+                    <span v-if="FORMS.replicanti.penality().gt(1)">
+                        Beyond <h3>{{ format(FORMS.replicanti.limit()) }}</h3> replicanti, make their growth is rooted by <h3>{{ format(FORMS.replicanti.penality()) }}</h3>
+                    </span><br><span v-if="FORMS.replicanti.superPenality().gt(1)" style="color: darkred;">
+                        Beyond <h3 style="color: darkred;">{{ format(FORMS.replicanti.superLimit()) }}</h3> replicanti, make replicanti penality is raised by <h3 style="color: darkred;">{{ format(FORMS.replicanti.superPenality()) }}</h3>
+                    </span>
+                </div><br>
+                <div v-if="player.tab[0] == 0">
+                    <div v-if="player.tab[1] == 0">
+                        <div v-if="FORMS.inf.reached()">
+                            <h3>Beyond Replicanti, Replicanti growth cannot go beyond Infinity...</h3><br><br>
+                            <button class='btn inf' onclick="FORMS.inf.reset()">
+                                Go Infinity, but resets all previous features except achievements for being Infinity.
+                            </button>
+                        </div><div v-else>
+                            <button class='btn' onclick="UPGS.replicanti.buyMax()">Buy Max</button><br><br>
+                            <div class='table_center'>
+                                <div style='min-width: 300px; margin: 5px;' v-for="x in UPGS.replicanti.cols">
+                                    <div style='text-align: left;'><h3>{{ format(player.rep_upgs[x], 0) }}</h3> {{ UPGS.replicanti[x].title }}</div><br>
+                                    <button class='btn' v-bind:class="{locked: !UPGS.replicanti.can(x)}" @click="UPGS.replicanti.buy(x)">
+                                        {{ UPGS.replicanti[x].desc() }}<br>Cost: {{ format(UPGS.replicanti[x].cost()) }} replicanti
+                                    </button>
+                                </div>
+                            </div><br><br><div class='table_center'>
+                                <div style='min-width: 300px; margin: 5px;'>
+                                    <div style='text-align: left;'><h3>{{ format(player.rep_galaxy, 0) }}</h3> Replicanti Galaxy</div><br>
+                                    <button class='btn' v-bind:class="{locked: !FORMS.replicanti.galaxy.can()}" @click="FORMS.replicanti.galaxy.reset()">
+                                        Reset your Replicanti, but makes Replicanti upgrades is <b>{{ format(FORMS.replicanti.galaxy.effect()) }}x</b> stronger.
+                                        <br>Require: {{ format(FORMS.replicanti.galaxy.req()) }} replicanti
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div><div v-if="player.tab[1] == 1">
+                        <div v-if="FORMS.prestige.seen()">
+                            <h3>You have <span style="color: #483bff;">{{ format(player.prestige.points,0) }}</span> Prestige points.</h3><br><br>
+                            <button class="btn prestige" v-bind:class="{locked: !FORMS.prestige.can()}" onclick="FORMS.prestige.reset()">
+                                Reset previous features for <b>{{ format(FORMS.prestige.gain(), 0) }}</b> Prestige points.
+                            </button><br><br>
+                            <div>
+                                <div class='table_center' v-for="r in UPGS.prestige.rows">
+                                    <div v-for="c in UPGS.prestige.cols" v-if="UPGS.prestige[r*10+c]?UPGS.prestige[r*10+c].unl():false">
+                                        <button class='btn prestige upg' v-bind:class="{locked: !UPGS.prestige.can(r*10+c), bought: player.prestige.upgrades.includes(r*10+c)}" @click="UPGS.prestige.buy(r*10+c)">
+                                            {{ UPGS.prestige[r*10+c].desc }}<br>
+                                            <span v-if="UPGS.prestige[r*10+c].effDesc">Currently: {{ UPGS.prestige[r*10+c].effDesc() }}<br></span>
+                                            Cost: {{ format(UPGS.prestige[r*10+c].cost,0) }} Prestige points
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><div v-else>
+                            Need to reach {{ format(2**256) }} replicanti to unlock.
+                        </div>
+                    </div>
+                </div><div v-if="player.tab[0] == 1">
+                    <button class="btn" onclick="save()">Save</button>
+                    <button class="btn" onclick="if (confirm('You wanted to RESET your progress to new game?')) {wipe(); location.reload()}">Hard Reset</button>
+                    <button class="btn" onclick="exporty()">Export</button>
+                    <button class="btn" onclick="importy()">Import</button><br><br>
+                    Replicanti Incremental Prototype v0.1 - made by MrRedShark77<br>
+                </div><div v-if="player.tab[0] == 2" style="color: black;">
+                    Your best Replicanti is {{ format(player.stats.best_rep) }}<br>
+                    Your fastest Replicanti growth is x{{ format(player.stats.fast_grow) }}/s<br>
+                    You played {{ format(player.time) }} seconds.<br><br>
+                    <div v-if="player.inf.times.gte(1)">
+                        You have Infinitied in {{ format(player.inf.times, 0) }} times.<br>
+                        Your fastest Infinity in {{ format(player.inf.best) }} seconds.<br>
+                        Your have spent {{ format(player.inf.time) }} seconds in this infinity.<br>
+                    </div>
+                </div><div v-if="player.tab[0] == 3">
+                    WIP...
+                </div><div v-if="player.tab[0] == 4">
+                    <div v-if="FORMS.inf.seen()">
+                        <h3>You have <span style="color: #ffaa2b;">{{ format(player.inf.points,0) }}</span> Infinity points.</h3><br><br>
+                        <div v-if="player.tab[1] == 0">
+                            You have <h2>{{ format(player.inf.replicanti) }} / {{ format(1e10) }}</h2> Infinity Replicanti. Translated to <h2>{{ format(FORMS.inf.replicanti.effect()) }}</h2>x strength on replicanti upgrades.<br>
+                            (x{{ format(FORMS.inf.replicanti.growth()) }}/s)<br>
+                            (+{{ format(FORMS.calc_OoM(FORMS.inf.replicanti.growth())) }} OoMs/s)<br><br>
+                            <div class='table_center'>
+                                <div style='min-width: 300px; margin: 5px;' v-for="x in UPGS.inf_rep.cols">
+                                    <div style='text-align: left;'><h3>{{ format(player.inf_rep_upgs[x], 0) }}</h3> {{ UPGS.inf_rep[x].title }}</div><br>
+                                    <button class='btn inf' v-bind:class="{locked: !UPGS.inf_rep.can(x)}" @click="UPGS.inf_rep.buy(x)">
+                                        {{ UPGS.inf_rep[x].desc() }}<br>Cost: {{ format(UPGS.inf_rep[x].cost()) }} Infinity Points
+                                    </button>
+                                </div>
+                            </div><br><br><div class='table_center'>
+                                <div style='min-width: 300px; margin: 5px;'>
+                                    <div style='text-align: left;'><h3>{{ format(player.inf.comp, 0) }}</h3> Infinity Compressor</div><br>
+                                    <button class='btn inf' v-bind:class="{locked: !FORMS.inf.comp.can()}" @click="FORMS.inf.comp.reset()">
+                                        Reset your Infinity Replicanti except thier upgrades, but adds <b>+{{ format(FORMS.inf.comp.effect().buff) }}</b> free base from Infinity Replicanti effect. Unfortunately, Infinity Replicanti growth is rooted by <b>{{ format(FORMS.inf.comp.effect().nerf) }}</b>.
+                                        <br>Require: Max of Infinity Replicanti
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div><div v-else>
+                        Need to reach {{ format(1.79e308) }} replicanti to Infinity.
+                    </div>
+                </div><div v-if="player.tab[0] == 5">
+                    :)
+                </div>
+            </div>
+            <div class='main_tab'>
+                <div v-if="TABS[2][player.tab[0]]">
+                    <div v-for="x in TABS[2][player.tab[0]].length" v-if="TABS[2][player.tab[0]][x-1].unl ? TABS[2][player.tab[0]][x-1].unl() : true">
+                        <button class='tab_btn' v-bind:class="{[TABS[2][player.tab[0]][x-1].style ? TABS[2][player.tab[0]][x-1].style : 'normal']: true}" @click="TABS.choose(x-1, true)">
+                            {{ FORMS.secretMessage(TABS[2][player.tab[0]][x-1].id, TABS[2][player.tab[0]][x-1].seen ? TABS[2][player.tab[0]][x-1].seen() : true) }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="display: none;">{{ player.time }}</div>
+    </div>
+</body>
+</html>
