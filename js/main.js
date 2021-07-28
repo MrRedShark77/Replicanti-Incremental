@@ -123,7 +123,7 @@ const FORMS = {
             effect(x=player.inf.comp) {
                 let ret = {}
                 ret.buff = x
-                ret.nerf = x.add(1)
+                ret.nerf = x.add(1).pow(1.5)
                 return ret
             },
         },
