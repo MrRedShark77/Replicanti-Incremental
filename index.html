@@ -4,12 +4,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
 
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="js/ExpantaNum.js"></script>
+    <script src="js/support/vue.min.js"></script>
+    <script src="js/support/jquery.js"></script>
+    <script src="js/support/notify.js"></script>
+    <script src="js/support/ExpantaNum.js"></script>
+
     <script src="js/saves.js"></script>
-    <script src="js/tabs.js"></script>
-    <script src="js/upgrades.js"></script>
+    <script src="js/contents/achievements.js"></script>
+    <script src="js/contents/tabs.js"></script>
+    <script src="js/contents/upgrades.js"></script>
+    <script src="js/contents/function.js"></script>
     <script src="js/main.js"></script>
+
     <script src="js/v.js"></script>
 
     <title>Replicanti Incremental</title>
@@ -86,7 +92,7 @@
                     <button class="btn" onclick="if (confirm('You wanted to RESET your progress to new game?')) {wipe(); location.reload()}">Hard Reset</button>
                     <button class="btn" onclick="exporty()">Export</button>
                     <button class="btn" onclick="importy()">Import</button><br><br>
-                    Replicanti Incremental Prototype v0.1 - made by MrRedShark77<br>
+                    Replicanti Incremental Prototype v0.1.1 - made by MrRedShark77<br>
                 </div><div v-if="player.tab[0] == 2" style="color: black;">
                     Your best Replicanti is {{ format(player.stats.best_rep) }}<br>
                     Your fastest Replicanti growth is x{{ format(player.stats.fast_grow) }}/s<br>
@@ -97,7 +103,15 @@
                         Your have spent {{ format(player.inf.time) }} seconds in this infinity.<br>
                     </div>
                 </div><div v-if="player.tab[0] == 3">
-                    WIP...
+                    <div>
+                        <div class='table_center' v-for="r in ACHS.rows">
+                            <div v-for="c in ACHS.cols" class="ach_hidden">
+                                <div class="achievement" v-bind:class="{bought: player.achs.includes(r*10+c)}" v-bind:style="{'background-image': 'url(images/achievements/'+(r*10+c)+'.png)'}"
+                                v-if="ACHS.names[r*10+c]" v-bind:tooltip="ACHS.getText(r*10+c)">{{ ACHS.names[r*10+c] }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div><div v-if="player.tab[0] == 4">
                     <div v-if="FORMS.inf.seen()">
                         <h3>You have <span style="color: #ffaa2b;">{{ format(player.inf.points,0) }}</span> Infinity points.</h3><br><br>
@@ -109,7 +123,7 @@
                                 <div style='min-width: 300px; margin: 5px;' v-for="x in UPGS.inf_rep.cols">
                                     <div style='text-align: left;'><h3>{{ format(player.inf_rep_upgs[x], 0) }}</h3> {{ UPGS.inf_rep[x].title }}</div><br>
                                     <button class='btn inf' v-bind:class="{locked: !UPGS.inf_rep.can(x)}" @click="UPGS.inf_rep.buy(x)">
-                                        {{ UPGS.inf_rep[x].desc() }}<br>Cost: {{ format(UPGS.inf_rep[x].cost()) }} Infinity Points
+                                        {{ UPGS.inf_rep[x].desc() }}<br>Cost: {{ format(UPGS.inf_rep[x].cost(),0) }} Infinity Points
                                     </button>
                                 </div>
                             </div><br><br><div class='table_center'>

@@ -29,6 +29,8 @@ function calc(dt) {
 
     player.time += dt
     player.inf.time += dt
+
+    ACHS.checkACHS()
 }
 
 const PLAYER_DATA = {
@@ -54,6 +56,7 @@ const PLAYER_DATA = {
         replicanti: E(1),
         comp: E(0),
     },
+    achs: [],
 }
 
 function wipe() {
