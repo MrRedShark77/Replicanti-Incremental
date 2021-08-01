@@ -8,6 +8,8 @@ const TABS = {
         { id: "Options" },
         { id: "Statistics" },
         { id: "Achievements" },
+        { id: "Autobuyers", unl() { return FORMS.inf.seen() } },
+        { id: "Challenges", unl() { return FORMS.inf.seen() } },
         { id: "Infinity", seen() { return FORMS.inf.seen() }, style: "inf" },
         { id: "Eternity", unl() { return FORMS.inf.seen() }, seen() { return false }, style: "eter" },
     ],
@@ -16,7 +18,10 @@ const TABS = {
             { id: "Replicanti" },
             { id: "Prestige", seen() { return FORMS.prestige.seen() }, style: "prestige" },
         ],
-        4: [
+        5: [
+            { id: "Challenges" },
+        ],
+        6: [
             { id: "Infinity Replicanti" },
         ],
     },

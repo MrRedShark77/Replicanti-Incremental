@@ -35,11 +35,11 @@ const ACHS = {
         21: "INFINITY PAGE",
         22: "Why i'm added cap?",
         23: "Taking longer",
-        24: "Placeholder",
-        25: "Placeholder",
-        26: "Placeholder",
-        27: "Placeholder",
-        28: "Placeholder",
+        24: "Sacrifice without galaxies?",
+        25: "Rock isn't smarter than you think",
+        26: "Infinity go brrr",
+        27: "Try Hard",
+        28: "Prestige capped?!",
     },
     descs: {
         0: "Placeholder.",
@@ -56,15 +56,18 @@ const ACHS = {
         21: "Go Infinity.",
         22: "Get Infinity Compressor.",
         23: "Get at least 5 Infinity Compressors.",
-        24: "Placeholder.",
-        25: "Placeholder.",
-        26: "Placeholder.",
-        27: "Placeholder.",
-        28: "Placeholder.",
+        24: "Prestige without Replicanti Galaxy.",
+        25: "Complete any Challenge.",
+        26: "Go Infinity in under 10 minutes.",
+        27: "Complete all of challenges.",
+        28: "Get format(1e20) Prestige points without breaking Infinity.",
     },
     rewards: {
         21: "Start with format(1e5) Replicanti.",
         22: "Replicanti Galaxy is 50% stronger.",
+        24: "Replicanti Galaxy is 25% stronger.",
+        26: "Start with format(1e10) Replicanti.",
+        27: "Double Infinity points gain.",
     },
     checks: {
         11() { return player.rep_upgs[2].gte(1) },
@@ -77,5 +80,13 @@ const ACHS = {
 
         22() { return player.inf.comp.gte(1) },
         23() { return player.inf.comp.gte(5) },
+        26() { return player.inf.best < 600 },
+        27() { return player.chals.comps.includes("normal1") 
+        && player.chals.comps.includes("normal2") 
+        && player.chals.comps.includes("normal3") 
+        && player.chals.comps.includes("normal4") 
+        && player.chals.comps.includes("normal5") 
+        && player.chals.comps.includes("normal6") },
+        28() { return player.prestige.points.gte(1e20) },
     }
 }

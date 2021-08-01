@@ -11,6 +11,8 @@
 
     <script src="js/saves.js"></script>
     <script src="js/contents/achievements.js"></script>
+    <script src="js/contents/challenges.js"></script>
+    <script src="js/contents/autobuyer.js"></script>
     <script src="js/contents/tabs.js"></script>
     <script src="js/contents/upgrades.js"></script>
     <script src="js/contents/function.js"></script>
@@ -34,10 +36,10 @@
                 You have <h2>{{ format(player.replicanti) }}</h2> replicanti<br>
                 ({{ format(FORMS.replicanti.growth()) }}x/s)<br>
                 (+{{ format(FORMS.calc_OoM(FORMS.replicanti.growth())) }} OoMs/s)<br><br><div style="height: 45px">
-                    <span v-if="FORMS.replicanti.penality().gt(1)">
-                        Beyond <h3>{{ format(FORMS.replicanti.limit()) }}</h3> replicanti, make their growth is rooted by <h3>{{ format(FORMS.replicanti.penality()) }}</h3>
-                    </span><br><span v-if="FORMS.replicanti.superPenality().gt(1)" style="color: darkred;">
-                        Beyond <h3 style="color: darkred;">{{ format(FORMS.replicanti.superLimit()) }}</h3> replicanti, make replicanti penality is raised by <h3 style="color: darkred;">{{ format(FORMS.replicanti.superPenality()) }}</h3>
+                    <span v-if="FORMS.replicanti.penalty().gt(1)">
+                        Beyond <h3>{{ format(FORMS.replicanti.limit()) }}</h3> replicanti, make their growth is rooted by <h3>{{ format(FORMS.replicanti.penalty()) }}</h3>
+                    </span><br><span v-if="FORMS.replicanti.superPenalty().gt(1)" style="color: darkred;">
+                        Beyond <h3 style="color: darkred;">{{ format(FORMS.replicanti.superLimit()) }}</h3> replicanti, make replicanti penalty is raised by <h3 style="color: darkred;">{{ format(FORMS.replicanti.superPenalty()) }}</h3>
                     </span>
                 </div><br>
                 <div v-if="player.tab[0] == 0">
@@ -92,7 +94,7 @@
                     <button class="btn" onclick="if (confirm('You wanted to RESET your progress to new game?')) {wipe(); location.reload()}">Hard Reset</button>
                     <button class="btn" onclick="exporty()">Export</button>
                     <button class="btn" onclick="importy()">Import</button><br><br>
-                    Replicanti Incremental Prototype v0.1.1 - made by MrRedShark77<br>
+                    Replicanti Incremental Prototype v0.1.2 - made by MrRedShark77<br>
                 </div><div v-if="player.tab[0] == 2" style="color: black;">
                     Your best Replicanti is {{ format(player.stats.best_rep) }}<br>
                     Your fastest Replicanti growth is x{{ format(player.stats.fast_grow) }}/s<br>
@@ -113,6 +115,27 @@
                         </div>
                     </div>
                 </div><div v-if="player.tab[0] == 4">
+                    <div class='table_center'>
+                        <div v-for="x in AUTOS.length" class="autobuyer" v-if="AUTOS[x].unl()">
+                            {{ AUTOS[x].dis }}<br><br>
+                            <span v-if="AUTOS[x].see()">Enabled <input type="checkbox" v-model="player.autobuyer[AUTOS[x].id]"></span>
+                            <span v-else>{{ AUTOS[x].see_desc }}</span>
+                        </div>
+                    </div>
+                </div><div v-if="player.tab[0] == 5">
+                    <button class="btn" v-bind:class="{locked: CHALS.onChal('')}" onclick="CHALS.exit()">Exit Challenge</button><br><br>
+                    <div v-if="player.tab[1] == 0">
+                        You need to complete thier challenges, then unlock Break Infinity (coming soon)<br><br>
+                        <div class='table_center'>
+                            <div v-for="x in CHALS.normal.length" class="challenge">
+                                <div style="min-height: 70px;">
+                                    {{ CHALS.normal[x].desc }}
+                                </div><br><button class="btn" v-bind:class="{locked: CHALS.onChal('normal'+x), bought: !CHALS.onChal('normal'+x) && player.chals.comps.includes('normal'+x)}" @click="CHALS.enter('normal',x)">{{ CHALS.normal.btnMsg(x) }}</button><br><br>
+                                Reward: {{ CHALS.normal[x].reward }}
+                            </div>
+                        </div>
+                    </div>
+                </div><div v-if="player.tab[0] == 6">
                     <div v-if="FORMS.inf.seen()">
                         <h3>You have <span style="color: #ffaa2b;">{{ format(player.inf.points,0) }}</span> Infinity points.</h3><br><br>
                         <div v-if="player.tab[1] == 0">
@@ -139,7 +162,7 @@
                     </div><div v-else>
                         Need to reach {{ format(1.79e308) }} replicanti to Infinity.
                     </div>
-                </div><div v-if="player.tab[0] == 5">
+                </div><div v-if="player.tab[0] == 7">
                     :)
                 </div>
             </div>

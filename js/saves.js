@@ -18,8 +18,7 @@ function calc(dt) {
     player.stats.fast_grow = FORMS.replicanti.growth().max(player.stats.fast_grow)
     if (!FORMS.inf.reached()) {
         let grow = player.replicanti.mul(FORMS.replicanti.growth().pow(dt))
-        if (grow.gte(FORMS.replicanti.superLimit()) && FORMS.replicanti.superPenality().lte(1) && false) player.replicanti = FORMS.replicanti.superLimit()
-        else player.replicanti = grow
+        player.replicanti = grow
     }
     player.stats.best_rep = player.replicanti.max(player.stats.best_rep)
 
@@ -30,6 +29,9 @@ function calc(dt) {
     player.time += dt
     player.inf.time += dt
 
+    if (player.chals.comps.includes("normal6")) player.prestige.points = player.prestige.points.add(FORMS.prestige.gain().mul(dt))
+
+    AUTOS.update()
     ACHS.checkACHS()
 }
 
@@ -57,11 +59,17 @@ const PLAYER_DATA = {
         comp: E(0),
     },
     achs: [],
+    chals: {
+        active: "",
+        comps: [],
+    },
+    autobuyer: {},
 }
 
 function wipe() {
     player = PLAYER_DATA
     for (let x = 1; x <= UPGS.replicanti.cols; x++) player.rep_upgs[x] = E(0)
+    for (let x = 1; x <= AUTOS.length; x++) player.autobuyer[AUTOS[x].id] = false
 }
 
 function loadPlayer(load) {
@@ -100,6 +108,14 @@ function checkIfUndefined() {
         if (player.inf[key] === undefined) player.inf[key] = data.inf[key]
     }
 
+        // Challenges
+    for (let x = 0; x < Object.keys(data.chals).length; x++) {
+        let key = Object.keys(data.chals)[x]
+        if (player.chals[key] === undefined) player.chals[key] = data.chals[key]
+    }
+
+        // Autobuyers
+    for (let x = 1; x <= AUTOS.length; x++) if (player.autobuyer[AUTOS[x].id] == undefined) player.autobuyer[AUTOS[x].id] = false
 }
 
 function convertToExpNum() {

@@ -9,6 +9,8 @@ function loadVue() {
 			UPGS,
 			TABS,
 			ACHS,
+			AUTOS,
+			CHALS,
 			getDisplayShrink,
             format,
         }
