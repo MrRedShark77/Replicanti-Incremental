@@ -131,9 +131,10 @@ const FORMS = {
         replicanti: {
             growth() { return UPGS.inf_rep[1].effect().root(FORMS.inf.comp.effect().nerf) },
             effect() {
-                let ret = player.inf.replicanti.log10().div(10).add(1).add(FORMS.inf.comp.effect().buff).softcap(2,0.75,0)
+                let ret = player.inf.replicanti.log10().div(this.cap().log10().max(1)).add(1).add(FORMS.inf.comp.effect().buff).softcap(2,0.75,0)
                 return ret
             },
+            cap() { return E(1e10).mul(FORMS.inf.comp.effect().cap) },
         },
         comp: {
             req() { return E(1e10) },
@@ -151,6 +152,7 @@ const FORMS = {
                 let ret = {}
                 ret.buff = x
                 ret.nerf = x.add(1).pow(1.5)
+                ret.cap = E(10).pow(x.sub(9).max(0).pow(1.5))
                 return ret
             },
         },

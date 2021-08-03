@@ -146,7 +146,7 @@
                     <div v-if="FORMS.inf.seen()">
                         <h3>You have <span style="color: #ffaa2b;">{{ format(player.inf.points,0) }}</span> Infinity points.</h3><br><br>
                         <div v-if="player.tab[1] == 0">
-                            You have <h2>{{ format(player.inf.replicanti) }} / {{ format(1e10) }}</h2> Infinity Replicanti. Translated to <h2>{{ format(FORMS.inf.replicanti.effect()) }}</h2>x strength on replicanti upgrades.<br>
+                            You have <h2>{{ format(player.inf.replicanti) }} / {{ format(FORMS.inf.replicanti.cap()) }}</h2> Infinity Replicanti. Translated to <h2>{{ format(FORMS.inf.replicanti.effect()) }}</h2>x strength on replicanti upgrades.<br>
                             (x{{ format(FORMS.inf.replicanti.growth()) }}/s)<br>
                             (+{{ format(FORMS.calc_OoM(FORMS.inf.replicanti.growth())) }} OoMs/s)<br><br>
                             <div class='table_center'>
@@ -161,6 +161,7 @@
                                     <div style='text-align: left;'><h3>{{ format(player.inf.comp, 0) }}</h3> Infinity Compressor</div><br>
                                     <button class='btn inf' v-bind:class="{locked: !FORMS.inf.comp.can()}" @click="FORMS.inf.comp.reset()">
                                         Reset your Infinity Replicanti except thier upgrades, but adds <b>+{{ format(FORMS.inf.comp.effect().buff) }}</b> free base from Infinity Replicanti effect. Unfortunately, Infinity Replicanti growth is rooted by <b>{{ format(FORMS.inf.comp.effect().nerf) }}</b>.
+                                        <span v-if="FORMS.inf.comp.effect().cap.gt(1)"> And Infinity Replicanti cap is increased by <b>{{ format(FORMS.inf.comp.effect().cap) }}x</b>.</span>
                                         <br>Require: Max of Infinity Replicanti
                                     </button>
                                 </div>
