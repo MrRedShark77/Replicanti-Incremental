@@ -142,7 +142,7 @@ const UPGS = {
             cost: E(2.5e4),
             effect() {
                 let ret = player.prestige.points.add(1).log10().add(1).pow(0.6)
-                return ret
+                return ret.softcap(11,0.5,0)
             },
             effDesc(eff=this.effect()) { return format(eff.sub(1).mul(100))+"% stronger" },
         },
@@ -189,7 +189,7 @@ const UPGS = {
             cost: E(5e12),
             effect() {
                 let ret = E(0.015).mul(player.replicanti.log10()).add(1)
-                return ret
+                return ret.softcap(11,0.5,0)
             },
             effDesc(eff=this.effect()) { return format(eff.sub(1).mul(100))+"% stronger" },
         },
