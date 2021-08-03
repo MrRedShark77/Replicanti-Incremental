@@ -18,7 +18,7 @@ const ACHS = {
         for (let r = 1; r <= this.rows; r++) for (let c = 1; c <= this.cols; c++) if (this.checks[r*10+c] !== undefined ? this.checks[r*10+c]() : false) this.unl(r*10+c)
     },
     cols: 8,
-    rows: 2,
+    rows: 3,
 
     names: {
         0: "Placeholder",
@@ -40,6 +40,10 @@ const ACHS = {
         26: "Infinity go brrr",
         27: "Try Hard",
         28: "Prestige capped?!",
+
+        31: "NOICE",
+        32: "HA GO BRRR",
+        33: "Anti-Galaxy",
     },
     descs: {
         0: "Placeholder.",
@@ -61,6 +65,10 @@ const ACHS = {
         26: "Go Infinity in under 10 minutes.",
         27: "Complete all of challenges.",
         28: "Get format(1e20) Prestige points without breaking Infinity.",
+
+        31: "Reach format(6.9e420) Replicanti.",
+        32: "Go Infinity in under 10 seconds.",
+        33: "Go Infinity without Replicanti Galaxies."
     },
     rewards: {
         21: "Start with format(1e5) Replicanti.",
@@ -68,6 +76,8 @@ const ACHS = {
         24: "Replicanti Galaxy is 25% stronger.",
         26: "Start with format(1e10) Replicanti.",
         27: "Double Infinity points gain.",
+
+        32: "Start with format(1e50) Replicanti.",
     },
     checks: {
         11() { return player.rep_upgs[2].gte(1) },
@@ -88,5 +98,8 @@ const ACHS = {
         && player.chals.comps.includes("normal5") 
         && player.chals.comps.includes("normal6") },
         28() { return player.prestige.points.gte(1e20) },
+
+        31() { return player.replicanti.gte("6.9e420") },
+        32() { return player.inf.best < 10 },
     }
 }

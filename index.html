@@ -33,6 +33,13 @@
                 </div>
             </div>
             <div style="width: calc(100% - 500px); height: 100%; overflow-y: auto;">
+                <br>
+                <div style="height: 100px;" class="table_center">
+                    <div v-if="FORMS.inf.seen()">
+                        You have <b style="color: #ffaa2b;">{{ format(player.inf.points,0) }}</b> Infinity Points<br><br>
+                        <button v-if="FORMS.inf.can()" class="btn inf" onclick="FORMS.inf.reset()">Gain <b>{{ format(FORMS.inf.gain(),0) }}</b> Infinity Points</button>
+                    </div>
+                </div>
                 You have <h2>{{ format(player.replicanti) }}</h2> replicanti<br>
                 ({{ format(FORMS.replicanti.growth()) }}x/s)<br>
                 (+{{ format(FORMS.calc_OoM(FORMS.replicanti.growth())) }} OoMs/s)<br><br><div style="height: 45px">
@@ -94,7 +101,7 @@
                     <button class="btn" onclick="if (confirm('You wanted to RESET your progress to new game?')) {wipe(); location.reload()}">Hard Reset</button>
                     <button class="btn" onclick="exporty()">Export</button>
                     <button class="btn" onclick="importy()">Import</button><br><br>
-                    Replicanti Incremental Prototype v0.1.2 - made by MrRedShark77<br>
+                    Replicanti Incremental Prototype v0.2 - made by MrRedShark77<br>
                 </div><div v-if="player.tab[0] == 2" style="color: black;">
                     Your best Replicanti is {{ format(player.stats.best_rep) }}<br>
                     Your fastest Replicanti growth is x{{ format(player.stats.fast_grow) }}/s<br>
@@ -125,7 +132,7 @@
                 </div><div v-if="player.tab[0] == 5">
                     <button class="btn" v-bind:class="{locked: CHALS.onChal('')}" onclick="CHALS.exit()">Exit Challenge</button><br><br>
                     <div v-if="player.tab[1] == 0">
-                        You need to complete thier challenges, then unlock Break Infinity (coming soon)<br><br>
+                        You need to complete thier challenges, then unlock Break Infinity<br><br>
                         <div class='table_center'>
                             <div v-for="x in CHALS.normal.length" class="challenge">
                                 <div style="min-height: 70px;">
@@ -156,6 +163,19 @@
                                         Reset your Infinity Replicanti except thier upgrades, but adds <b>+{{ format(FORMS.inf.comp.effect().buff) }}</b> free base from Infinity Replicanti effect. Unfortunately, Infinity Replicanti growth is rooted by <b>{{ format(FORMS.inf.comp.effect().nerf) }}</b>.
                                         <br>Require: Max of Infinity Replicanti
                                     </button>
+                                </div>
+                            </div>
+                        </div><div v-if="player.tab[1] == 1">
+                            <button class="btn inf" onclick="player.breakInf = !player.breakInf">{{ FORMS.inf.break.msg() }}</button><br><br>
+                            <div>
+                                <div class='table_center' v-for="r in UPGS.post_inf.rows">
+                                    <div v-for="c in UPGS.post_inf.cols" v-if="UPGS.post_inf[r*10+c]?UPGS.post_inf[r*10+c].unl():false">
+                                        <button class='btn inf upg' v-bind:class="{locked: !UPGS.post_inf.can(r*10+c), bought: player.inf.upgrades.includes(r*10+c)}" @click="UPGS.post_inf.buy(r*10+c)">
+                                            {{ UPGS.post_inf[r*10+c].desc }}<br>
+                                            <span v-if="UPGS.post_inf[r*10+c].effDesc">Currently: {{ UPGS.post_inf[r*10+c].effDesc() }}<br></span>
+                                            Cost: {{ format(UPGS.post_inf[r*10+c].cost,0) }} Infinity points
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

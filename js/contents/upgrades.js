@@ -169,10 +169,11 @@ const UPGS = {
         },
         32: {
             unl() { return true },
-            desc: "Presige points boosts itself.",
+            desc: "Prestige points boosts itself.",
             cost: E(1e9),
             effect() {
                 let ret = player.prestige.points.add(1).log10().add(1).pow(2)
+                if (player.prestige.upgrades.includes(42)) ret = player.prestige.points.add(1).root(4)
                 return ret
             },
             effDesc(eff=this.effect()) { return "x"+format(eff) },
@@ -196,6 +197,11 @@ const UPGS = {
             unl() { return true },
             desc: "Prestige upgrade 8 can boost Prestige upgrade 9.",
             cost: E(1e14),
+        },
+        42: {
+            unl() { return player.breakInf },
+            desc: "Prestige upgrade 10 formula is better.",
+            cost: E(1e36),
         },
     },
     inf_rep: {
@@ -222,6 +228,7 @@ const UPGS = {
             cost(x=player.inf_rep_upgs[this.id]) { return E(1.5).pow(x.pow(1.5)).floor() },
             effect(x=player.inf_rep_upgs[this.id]) {
                 let lvl = x
+                if (player.inf.upgrades.includes(13)) lvl = lvl.mul(UPGS.post_inf[13].effect())
                 return lvl.mul(0.01).add(1)
             },
             desc(eff=this.effect()) { return `Multiple Infinity Replicanti growth by ${format(eff)}x.` },
@@ -231,5 +238,46 @@ const UPGS = {
                 return bulk
             },
         },
-    }
+    },
+    post_inf: {
+        cols: 4,
+        rows: 1,
+        can(x) { return player.inf.points.gte(this[x].cost) && !player.inf.upgrades.includes(x) },
+        buy(x) {
+            if (this.can(x)) {
+                player.inf.points = player.inf.points.sub(this[x].cost)
+                player.inf.upgrades.push(x)
+            }
+        },
+        11: {
+            unl() { return true },
+            desc: "Replicanti Slowdown starts later based on unspent Infinity points.",
+            cost: E(100),
+            effect() {
+                let ret = player.inf.points.add(1).pow(20)
+                return ret
+            },
+            effDesc(eff=this.effect()) { return "x"+format(eff)+" later" },
+        },
+        12: {
+            unl() { return true },
+            desc: "Infinity points is boosted by Prestige points.",
+            cost: E(500),
+            effect() {
+                let ret = player.prestige.points.add(1).log10().add(1)
+                return ret
+            },
+            effDesc(eff=this.effect()) { return "x"+format(eff) },
+        },
+        13: {
+            unl() { return true },
+            desc: "Keep Prestige upgrades on reset. Infinity Replicanti Multiplier is stronger based on Replicanti.",
+            cost: E(2.5e4),
+            effect() {
+                let ret = player.replicanti.log10().add(1).log10().add(1)
+                return ret
+            },
+            effDesc(eff=this.effect()) { return format(eff)+"x stronger" },
+        },
+    },
 }

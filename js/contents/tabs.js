@@ -23,6 +23,7 @@ const TABS = {
         ],
         6: [
             { id: "Infinity Replicanti" },
+            { id: "Break Infinity", unl() { return FORMS.inf.break.seen() } },
         ],
     },
 }

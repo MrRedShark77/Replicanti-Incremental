@@ -9,6 +9,7 @@ function ex(x){
 
 ExpantaNum.prototype.softcap = function (start,force,mode){
     var x = this.clone()
+    if (x.lt(start)) return x
     if([0,"pow"].includes(mode)) x = x.div(start).pow(force).mul(start).min(x)
     if([1,"mul"].includes(mode)) x = x.sub(start).div(force).add(start).min(x)
     return x
@@ -57,6 +58,7 @@ const PLAYER_DATA = {
         times: E(0),
         replicanti: E(1),
         comp: E(0),
+        upgrades: [],
     },
     achs: [],
     chals: {
@@ -64,6 +66,7 @@ const PLAYER_DATA = {
         comps: [],
     },
     autobuyer: {},
+    breakInf: false,
 }
 
 function wipe() {

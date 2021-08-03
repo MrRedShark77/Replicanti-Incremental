@@ -8,7 +8,6 @@ const FORMS = {
             let gain = UPGS.replicanti[2].effect()
             if (CHALS.onChal("normal2")) gain = E(2)
             gain = gain.pow(UPGS.replicanti[3].effect())
-        
             return gain.root(this.penalty()).min(FORMS.INF)
         },
         limit() {
@@ -27,6 +26,7 @@ const FORMS = {
             let a = FORMS.quarterINF
             if (player.prestige.upgrades.includes(21)) a = a.mul(UPGS.prestige[21].effect())
             if (player.prestige.upgrades.includes(31)) a = a.mul(UPGS.prestige[31].effect())
+            if (player.inf.upgrades.includes(11)) a = a.mul(UPGS.post_inf[11].effect())
             if (player.prestige.upgrades.includes(33)) a = a.pow(1.15)
             return a.max(1)
         },
@@ -50,11 +50,10 @@ const FORMS = {
                 }
             },
             onReset() {
-                if (ACHS.has(21)) {
-                    player.replicanti = E(1e5)
-                    if (ACHS.has(26)) player.replicanti = E(1e10)
-                }
-                else player.replicanti = E(1)
+                player.replicanti = E(1)
+                if (ACHS.has(21)) player.replicanti = E(1e5)
+                if (ACHS.has(26)) player.replicanti = E(1e10)
+                if (ACHS.has(32)) player.replicanti = E(1e50)
                 for (let x = 1; x <= UPGS.replicanti.cols; x++) player.rep_upgs[x] = E(0)
             },
             effect(x=player.rep_galaxy) {
@@ -97,15 +96,19 @@ const FORMS = {
         },
     },
     inf: {
-        reached() { return player.replicanti.gte(FORMS.INF) },
+        reached() { return player.replicanti.gte(FORMS.INF) && !player.breakInf },
         seen() { return player.inf.times.gte(1) },
         gain() {
             let gain = E(1)
+            if (player.breakInf) gain = player.replicanti.root(FORMS.INF.log10())
+            if (gain.lt(10) && player.breakInf) return E(0)
             if (ACHS.has(28)) gain = gain.mul(2)
+            if (player.inf.upgrades.includes(12)) gain = gain.mul(UPGS.post_inf[12].effect())
             return gain
         },
+        can() { return player.breakInf && this.gain().gte(1) },
         reset() {
-            if (this.reached()) {
+            if (this.reached() || this.can()) {
                 if (player.inf.time < player.inf.best) player.inf.best = player.inf.time
                 if (player.chals.active.includes("normal") && !player.chals.comps.includes(player.chals.active)) {
                     player.chals.comps.push(player.chals.active)
@@ -115,13 +118,14 @@ const FORMS = {
                 player.inf.points = player.inf.points.add(this.gain())
                 player.inf.times = player.inf.times.add(1)
                 ACHS.unl(21)
+                if (player.rep_galaxy.lte(0)) ACHS.unl(33)
                 this.onReset()
             }
         },
         onReset() {
             player.inf.time = 0
             player.prestige.points = E(0)
-            player.prestige.upgrades = []
+            if (!player.inf.upgrades.includes(13)) player.prestige.upgrades = []
             FORMS.prestige.onReset()
         },
         replicanti: {
@@ -149,6 +153,15 @@ const FORMS = {
                 ret.nerf = x.add(1).pow(1.5)
                 return ret
             },
+        },
+        break: {
+            seen() { return player.chals.comps.includes("normal1") 
+            && player.chals.comps.includes("normal2") 
+            && player.chals.comps.includes("normal3") 
+            && player.chals.comps.includes("normal4") 
+            && player.chals.comps.includes("normal5") 
+            && player.chals.comps.includes("normal6") },
+            msg() { return player.breakInf ? "Fix Infinity" : "Break Infinity" },
         },
     },
 }

@@ -13,7 +13,7 @@ const ST_NAMES = [
 
 function format(ex, acc=4, style="sc") {
     ex = E(ex)
-    if (ex.isInfinite() || ex.gte(FORMS.INF)) return 'Infinity'
+    if (ex.isInfinite() || (ex.gte(FORMS.INF) && !player.breakInf)) return 'Infinity'
     neg = ex.isNegative()?"-":""
     if (ex.isNegative()) ex = ex.mul(-1)
     let e = ex.log10().floor()
