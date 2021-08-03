@@ -29,6 +29,7 @@
                 <div v-for="x in TABS[1].length" v-if="TABS[1][x-1].unl ? TABS[1][x-1].unl() : true">
                     <button class='tab_btn' v-bind:class="{[TABS[1][x-1].style ? TABS[1][x-1].style : 'normal']: true}" @click="TABS.choose(x-1)">
                         {{ FORMS.secretMessage(TABS[1][x-1].id, TABS[1][x-1].seen ? TABS[1][x-1].seen() : true) }}
+                        <span v-if="TABS[1][x-1].notify ? TABS[1][x-1].notify() : false" class="notify">[!]</span>
                     </button>
                 </div>
             </div>
@@ -101,7 +102,7 @@
                     <button class="btn" onclick="if (confirm('You wanted to RESET your progress to new game?')) {wipe(); location.reload()}">Hard Reset</button>
                     <button class="btn" onclick="exporty()">Export</button>
                     <button class="btn" onclick="importy()">Import</button><br><br>
-                    Replicanti Incremental Prototype v0.2 - made by MrRedShark77<br>
+                    Replicanti Incremental Prototype v0.2.0.2 - made by MrRedShark77<br>
                 </div><div v-if="player.tab[0] == 2" style="color: black;">
                     Your best Replicanti is {{ format(player.stats.best_rep) }}<br>
                     Your fastest Replicanti growth is x{{ format(player.stats.fast_grow) }}/s<br>
@@ -192,6 +193,7 @@
                     <div v-for="x in TABS[2][player.tab[0]].length" v-if="TABS[2][player.tab[0]][x-1].unl ? TABS[2][player.tab[0]][x-1].unl() : true">
                         <button class='tab_btn' v-bind:class="{[TABS[2][player.tab[0]][x-1].style ? TABS[2][player.tab[0]][x-1].style : 'normal']: true}" @click="TABS.choose(x-1, true)">
                             {{ FORMS.secretMessage(TABS[2][player.tab[0]][x-1].id, TABS[2][player.tab[0]][x-1].seen ? TABS[2][player.tab[0]][x-1].seen() : true) }}
+                            <span v-if="TABS[2][player.tab[0]][x-1].notify ? TABS[2][player.tab[0]][x-1].notify() : false" class="notify">[!]</span>
                         </button>
                     </div>
                 </div>

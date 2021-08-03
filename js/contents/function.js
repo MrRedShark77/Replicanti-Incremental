@@ -109,6 +109,7 @@ const FORMS = {
         can() { return player.breakInf && this.gain().gte(1) },
         reset() {
             if (this.reached() || this.can()) {
+                if (player.rep_galaxy.lte(0)) ACHS.unl(33)
                 if (player.inf.time < player.inf.best) player.inf.best = player.inf.time
                 if (player.chals.active.includes("normal") && !player.chals.comps.includes(player.chals.active)) {
                     player.chals.comps.push(player.chals.active)
@@ -118,7 +119,6 @@ const FORMS = {
                 player.inf.points = player.inf.points.add(this.gain())
                 player.inf.times = player.inf.times.add(1)
                 ACHS.unl(21)
-                if (player.rep_galaxy.lte(0)) ACHS.unl(33)
                 this.onReset()
             }
         },
@@ -137,7 +137,7 @@ const FORMS = {
             cap() { return E(1e10).mul(FORMS.inf.comp.effect().cap) },
         },
         comp: {
-            req() { return E(1e10) },
+            req() { return FORMS.inf.replicanti.cap() },
             can() { return player.inf.replicanti.gte(this.req()) },
             reset() {
                 if (this.can()) {

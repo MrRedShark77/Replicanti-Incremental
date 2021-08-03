@@ -192,6 +192,12 @@ h3 {
     margin: 3px 8px;
 }
 
+.notify {
+	color: red;
+	font-size: 20px;
+	font-weight: bold;
+}
+
 [tooltip] {
 	position: relative;
 	z-index: 2;

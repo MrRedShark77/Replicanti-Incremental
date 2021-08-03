@@ -24,7 +24,7 @@ function calc(dt) {
     player.stats.best_rep = player.replicanti.max(player.stats.best_rep)
 
     let inf_grow = player.inf.replicanti.mul(FORMS.inf.replicanti.growth().pow(dt))
-    if (inf_grow.gte(1e10)) player.inf.replicanti = E(1e10)
+    if (inf_grow.gte(FORMS.inf.replicanti.cap())) player.inf.replicanti = E(FORMS.inf.replicanti.cap())
     else player.inf.replicanti = inf_grow
 
     player.time += dt

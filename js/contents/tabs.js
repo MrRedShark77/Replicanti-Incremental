@@ -10,7 +10,7 @@ const TABS = {
         { id: "Achievements" },
         { id: "Autobuyers", unl() { return FORMS.inf.seen() } },
         { id: "Challenges", unl() { return FORMS.inf.seen() } },
-        { id: "Infinity", seen() { return FORMS.inf.seen() }, style: "inf" },
+        { id: "Infinity", seen() { return FORMS.inf.seen() }, style: "inf", notify() { return FORMS.inf.comp.can() } },
         { id: "Eternity", unl() { return FORMS.inf.seen() }, seen() { return false }, style: "eter" },
     ],
     2: {
@@ -22,7 +22,7 @@ const TABS = {
             { id: "Challenges" },
         ],
         6: [
-            { id: "Infinity Replicanti" },
+            { id: "Infinity Replicanti", notify() { return FORMS.inf.comp.can() } },
             { id: "Break Infinity", unl() { return FORMS.inf.break.seen() } },
         ],
     },
