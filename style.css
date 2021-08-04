@@ -180,6 +180,11 @@ h3 {
     margin: 3px 8px;
 }
 
+.challenge.inf {
+	background: black;
+	color: #ffaa2b;
+}
+
 .autobuyer {
 	width: 250px;
 	height: 100px;
@@ -196,6 +201,16 @@ h3 {
 	color: red;
 	font-size: 20px;
 	font-weight: bold;
+	animation: notify_anim 3s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+@keyframes notify_anim {
+	0%, 100% {
+		opacity: 0.25;
+	}
+	50% {
+		opacity: 1;
+	}
 }
 
 [tooltip] {

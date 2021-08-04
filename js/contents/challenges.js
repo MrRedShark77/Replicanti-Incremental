@@ -1,5 +1,20 @@
 const CHALS = {
     types: ['normal','inf'],
+    sumTotal() {
+        let total = {}
+        for (let x in this.types) {
+            let total2 = 0
+            for (let y = 1; y <= this[this.types[x]].length; y++) {
+                if (player.stats.chals_best[this.types[x]+y] === undefined) {
+                    total2 = 1e9
+                    break
+                }
+                total2 += player.stats.chals_best[this.types[x]+y]
+            }
+            total[this.types[x]] = total2
+        }
+        return total
+    },
     onChal(x) { return player.chals.active == x },
     enter(ch, id) {
         if (player.chals.active == "") {
@@ -23,38 +38,59 @@ const CHALS = {
     normal: {
         btnMsg(x) { return player.chals.active == "normal"+x ? "Running" : (player.chals.comps.includes("normal"+x) ? "Completed" : "Start") },
         onEnter() {
-            FORMS.inf.onReset()
+            FORMS.inf.onReset(true)
         },
         length: 6,
         1: {
             unl() { return true },
-            desc: "Replicanti Penalty is 50% stronger.",
-            reward: "Unlock Replicanti Storage autobuyer.",
+            desc: "Replicanti Penalty is 50% stronger",
+            reward: "Unlock Replicanti Storage autobuyer",
         },
         2: {
             unl() { return true },
-            desc: "You cannot buy Replicanti Multiplier, and Replicanti growth starts 2x.",
-            reward: "Unlock Replicanti Multiplier autobuyer.",
+            desc: "You cannot buy Replicanti Multiplier, and Replicanti growth starts 2x",
+            reward: "Unlock Replicanti Multiplier autobuyer",
         },
         3: {
             unl() { return true },
-            desc: "Replicanti Multiplier/Power scales stronger.",
-            reward: "Unlock Replicanti Power autobuyer.",
+            desc: "Replicanti Multiplier/Power scales stronger",
+            reward: "Unlock Replicanti Power autobuyer",
         },
         4: {
             unl() { return true },
-            desc: "Repeated Replicanti boost Replicanti Multiplier/Power instead of Replicanti Storage, but Repeated Replicanti are 4x stronger.",
-            reward: "Unlock Repeated Replicanti autobuyer.",
+            desc: "Repeated Replicanti boost Replicanti Multiplier/Power instead of Replicanti Storage, but Repeated Replicanti are 4x stronger",
+            reward: "Unlock Repeated Replicanti autobuyer",
         },
         5: {
             unl() { return true },
-            desc: "Replicanti Galaxy scales stronger.",
-            reward: "Unlock Replicanti Galaxy autobuyer.",
+            desc: "Replicanti Galaxy scales stronger",
+            reward: "Unlock Replicanti Galaxy autobuyer",
         },
         6: {
             unl() { return true },
-            desc: "Prestige points gain are raised by 0.85.",
-            reward: "You gain 100% of your Prestige points gained on reset each second.",
+            desc: "Prestige points gain are raised by 0.85",
+            reward: "You gain 100% of your Prestige points gained on reset each second",
+        },
+    },
+    inf: {
+        requires: [E('e1100'), E('e1360')],
+        canComplete() { return player.replicanti.gte(this[player.chals.active.split("inf")[1]].goal) },
+        canUnlock() { return player.replicanti.gte(this.requires[player.chals.inf_unls]) },
+        unlock() { if (this.canUnlock()) player.chals.inf_unls++ },
+        btnMsg(x) { return player.chals.active == "inf"+x ? "Running" : (player.chals.comps.includes("inf"+x) ? "Completed" : "Start") },
+        onEnter() {
+            FORMS.inf.onReset(true)
+        },
+        length: 2,
+        1: {
+            goal: E('e480'),
+            desc: "All previous challenges at once",
+            reward: "All of the challenges completed boost Infinity Replicanti growth",
+        },
+        2: {
+            goal: E('e500'),
+            desc: "Replicant Galaxy is disabled, but you can sacrifice Replicanti",
+            reward: "Unlock Replicanti Sacrifice",
         },
     },
 }

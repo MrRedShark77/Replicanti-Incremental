@@ -39,9 +39,11 @@ function calc(dt) {
 const PLAYER_DATA = {
     replicanti: E(1),
     rep_galaxy: E(0),
+    rep_sacrifice: E(1),
     stats: {
         best_rep: E(1),
         fast_grow: E(1),
+        chals_best: {},
     },
     rep_upgs: {},
     inf_rep_upgs: {},
@@ -53,7 +55,7 @@ const PLAYER_DATA = {
     },
     inf: {
         time: 0,
-        best: 999999999,
+        best: 1e9,
         points: E(0),
         times: E(0),
         replicanti: E(1),
@@ -63,6 +65,7 @@ const PLAYER_DATA = {
     achs: [],
     chals: {
         active: "",
+        inf_unls: 0,
         comps: [],
     },
     autobuyer: {},
@@ -72,6 +75,7 @@ const PLAYER_DATA = {
 function wipe() {
     player = PLAYER_DATA
     for (let x = 1; x <= UPGS.replicanti.cols; x++) player.rep_upgs[x] = E(0)
+    for (let x = 1; x <= UPGS.inf_rep.cols; x++) player.inf_rep_upgs[x] = E(0)
     for (let x = 1; x <= AUTOS.length; x++) player.autobuyer[AUTOS[x].id] = false
 }
 
@@ -124,6 +128,7 @@ function checkIfUndefined() {
 function convertToExpNum() {
     player.replicanti = ex(player.replicanti)
     player.rep_galaxy = ex(player.rep_galaxy)
+    player.rep_sacrifice = ex(player.rep_sacrifice)
     for (let x = 1; x <= UPGS.replicanti.cols; x++) player.rep_upgs[x] = ex(player.rep_upgs[x])
     for (let x = 1; x <= UPGS.inf_rep.cols; x++) player.inf_rep_upgs[x] = ex(player.inf_rep_upgs[x])
     player.prestige.points = ex(player.prestige.points)

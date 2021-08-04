@@ -38,7 +38,10 @@
                 <div style="height: 100px;" class="table_center">
                     <div v-if="FORMS.inf.seen()">
                         You have <b style="color: #ffaa2b;">{{ format(player.inf.points,0) }}</b> Infinity Points<br><br>
-                        <button v-if="FORMS.inf.can()" class="btn inf" onclick="FORMS.inf.reset()">Gain <b>{{ format(FORMS.inf.gain(),0) }}</b> Infinity Points</button>
+                        <button v-if="FORMS.inf.can()" class="btn inf" onclick="FORMS.inf.reset()">
+                            <span v-if="player.chals.active.includes('inf')">Complete Infinity Challenge...</span>
+                            <span v-else>Gain <b>{{ format(FORMS.inf.gain(),0) }}</b> Infinity Points</span>
+                        </button>
                     </div>
                 </div>
                 You have <h2>{{ format(player.replicanti) }}</h2> replicanti<br>
@@ -73,6 +76,11 @@
                                         Reset your Replicanti, but makes Replicanti upgrades is <b>{{ format(FORMS.replicanti.galaxy.effect()) }}x</b> stronger.
                                         <br>Require: {{ format(FORMS.replicanti.galaxy.req()) }} replicanti
                                     </button>
+                                </div><div style='min-width: 300px; margin: 5px;' v-if="FORMS.replicanti.sacrifice.unl()">
+                                    <div style='text-align: left;'>Replicanti Sacrifice <b style="color: black">(^{{ format(player.rep_sacrifice) }})</b></div><br>
+                                    <button class='btn' v-bind:class="{locked: !FORMS.replicanti.sacrifice.can()}" @click="FORMS.replicanti.sacrifice.doSac()">
+                                        Sacrifice your Replicanti, but makes Replicanti growth is <b>^{{ format(player.rep_sacrifice) }} -> ^{{ format(player.rep_sacrifice.mul(FORMS.replicanti.sacrifice.before())) }}</b> stonger.
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -102,15 +110,31 @@
                     <button class="btn" onclick="if (confirm('You wanted to RESET your progress to new game?')) {wipe(); location.reload()}">Hard Reset</button>
                     <button class="btn" onclick="exporty()">Export</button>
                     <button class="btn" onclick="importy()">Import</button><br><br>
-                    Replicanti Incremental Prototype v0.2.0.2 - made by MrRedShark77<br>
+                    Replicanti Incremental Prototype v0.2.1 - made by MrRedShark77<br>
                 </div><div v-if="player.tab[0] == 2" style="color: black;">
-                    Your best Replicanti is {{ format(player.stats.best_rep) }}<br>
-                    Your fastest Replicanti growth is x{{ format(player.stats.fast_grow) }}/s<br>
-                    You played {{ format(player.time) }} seconds.<br><br>
-                    <div v-if="player.inf.times.gte(1)">
-                        You have Infinitied in {{ format(player.inf.times, 0) }} times.<br>
-                        Your fastest Infinity in {{ format(player.inf.best) }} seconds.<br>
-                        Your have spent {{ format(player.inf.time) }} seconds in this infinity.<br>
+                    <div v-if="player.tab[1] == 0">
+                        Your best Replicanti is {{ format(player.stats.best_rep) }}<br>
+                        Your fastest Replicanti growth is x{{ format(player.stats.fast_grow) }}/s<br>
+                        You played {{ format(player.time) }} seconds.<br><br>
+                        <div v-if="player.inf.times.gte(1)">
+                            You have Infinitied in {{ format(player.inf.times, 0) }} times.<br>
+                            Your fastest Infinity in {{ format(player.inf.best) }} seconds.<br>
+                            Your have spent {{ format(player.inf.time) }} seconds in this infinity.<br>
+                        </div>
+                    </div><div v-if="player.tab[1] == 1">
+                        <div class='table_center'>
+                            <div style="width: 400px; margin: 10px;">
+                                Best total time of Challenges - {{ format(CHALS.sumTotal().normal) }} seconds<br><br>
+                                <div v-for="x in CHALS.normal.length" v-if="player.stats.chals_best['normal'+x] !== undefined">
+                                    Challenge {{x}} best time - {{ format(player.stats.chals_best['normal'+x]) }} seconds
+                                </div>
+                            </div><div style="width: 400px; margin: 10px;">
+                                Best total time of Infinity Challenges - {{ format(CHALS.sumTotal().inf) }} seconds<br><br>
+                                <div v-for="x in CHALS.inf.length" v-if="player.stats.chals_best['inf'+x] !== undefined">
+                                    Infinity Challenge {{x}} best time - {{ format(player.stats.chals_best['inf'+x]) }} seconds
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div><div v-if="player.tab[0] == 3">
                     <div>
@@ -140,6 +164,16 @@
                                     {{ CHALS.normal[x].desc }}
                                 </div><br><button class="btn" v-bind:class="{locked: CHALS.onChal('normal'+x), bought: !CHALS.onChal('normal'+x) && player.chals.comps.includes('normal'+x)}" @click="CHALS.enter('normal',x)">{{ CHALS.normal.btnMsg(x) }}</button><br><br>
                                 Reward: {{ CHALS.normal[x].reward }}
+                            </div>
+                        </div>
+                    </div><div v-if="player.tab[1] == 1">
+                        <button class="btn inf" v-if="CHALS.inf.length > player.chals.inf_unls" v-bind:class="{locked: !CHALS.inf.canUnlock()}" onclick="CHALS.inf.unlock()">Reach <b>{{ format(CHALS.inf.requires[player.chals.inf_unls]) }}</b> Replicanti to unlock new Infinity Challenge</button><br><br>
+                        <div class='table_center'>
+                            <div v-for="x in player.chals.inf_unls" class="challenge inf">
+                                <div style="min-height: 70px;">
+                                    {{ CHALS.inf[x].desc }}
+                                </div><br><button class="btn" v-bind:class="{locked: CHALS.onChal('inf'+x), bought: !CHALS.onChal('inf'+x) && player.chals.comps.includes('inf'+x)}" @click="CHALS.enter('inf',x)">{{ CHALS.inf.btnMsg(x) }}</button><br><br>
+                                Goal: {{ CHALS.inf[x].goal }} Replicanti<br>Reward: {{ CHALS.inf[x].reward }}
                             </div>
                         </div>
                     </div>

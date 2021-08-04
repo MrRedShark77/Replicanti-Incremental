@@ -9,7 +9,7 @@ const TABS = {
         { id: "Statistics" },
         { id: "Achievements" },
         { id: "Autobuyers", unl() { return FORMS.inf.seen() } },
-        { id: "Challenges", unl() { return FORMS.inf.seen() } },
+        { id: "Challenges", unl() { return FORMS.inf.seen() }, notify() { return CHALS.inf.canUnlock() } },
         { id: "Infinity", seen() { return FORMS.inf.seen() }, style: "inf", notify() { return FORMS.inf.comp.can() } },
         { id: "Eternity", unl() { return FORMS.inf.seen() }, seen() { return false }, style: "eter" },
     ],
@@ -18,8 +18,13 @@ const TABS = {
             { id: "Replicanti" },
             { id: "Prestige", seen() { return FORMS.prestige.seen() }, style: "prestige" },
         ],
+        2: [
+            { id: "Main" },
+            { id: "Challenge Records", unl() { return FORMS.inf.seen() } },
+        ],
         5: [
             { id: "Challenges" },
+            { id: "Infinity Challenges", unl() { return player.breakInf }, style: "inf", notify() { return CHALS.inf.canUnlock() } },
         ],
         6: [
             { id: "Infinity Replicanti", notify() { return FORMS.inf.comp.can() } },

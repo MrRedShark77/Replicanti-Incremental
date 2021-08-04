@@ -6,8 +6,10 @@ const FORMS = {
     replicanti: {
         growth() {
             let gain = UPGS.replicanti[2].effect()
-            if (CHALS.onChal("normal2")) gain = E(2)
+            if (CHALS.onChal("normal2") || CHALS.onChal("inf1")) gain = E(2)
+            if (this.sacrifice.unl()) gain = gain.pow(player.rep_sacrifice)
             gain = gain.pow(UPGS.replicanti[3].effect())
+            if (ACHS.has(38)) gain = gain.pow(player.replicanti.log10().add(1).log10().add(1))
             return gain.root(this.penalty()).min(FORMS.INF)
         },
         limit() {
@@ -19,7 +21,7 @@ const FORMS = {
             let a = x.logBase(this.limit())
             a = a.add(1).pow(a).pow(this.superPenalty())
             if (player.prestige.upgrades.includes(13)) a = a.pow(0.75)
-            if (CHALS.onChal("normal1")) a = a.pow(1.5)
+            if (CHALS.onChal("normal1") || CHALS.onChal("inf1")) a = a.pow(1.5)
             return a.max(1)
         },
         superLimit() {
@@ -35,12 +37,14 @@ const FORMS = {
             let a = x.logBase(this.superLimit())
             if (a.lte(1)) return E(1)
             a = a.pow(2).mul(3).pow(a)
+            if (player.inf.upgrades.includes(14)) a = a.pow(0.85)
             return a
         },
 
         galaxy: {
-            req(x=player.rep_galaxy) { return E(1e6).pow(x.pow(1.25).pow(CHALS.onChal("normal5")?4/3:1)).mul(1e12) },
-            can() { return player.replicanti.gte(this.req()) },
+            req(x=player.rep_galaxy) { return E(1e6).pow(x.pow(1.25).pow(CHALS.onChal("normal5") || CHALS.onChal("inf1")?4/3:1)).mul(1e12)
+            .div(player.prestige.upgrades.includes(43) ? UPGS.prestige[43].effect() : 1).max(1) },
+            can() { return player.replicanti.gte(this.req()) && !CHALS.onChal("inf2") },
             reset(bulk=false) {
                 if (this.can()) {
                     if (bulk && this.bulk().gt(player.rep_galaxy)) {
@@ -49,11 +53,12 @@ const FORMS = {
                     if (!player.prestige.upgrades.includes(14)) this.onReset()
                 }
             },
-            onReset() {
+            onReset(force=false) {
                 player.replicanti = E(1)
-                if (ACHS.has(21)) player.replicanti = E(1e5)
-                if (ACHS.has(26)) player.replicanti = E(1e10)
-                if (ACHS.has(32)) player.replicanti = E(1e50)
+                if (ACHS.has(21) && !force) player.replicanti = E(1e5)
+                if (ACHS.has(26) && !force) player.replicanti = E(1e10)
+                if (ACHS.has(32) && !force) player.replicanti = E(1e50)
+                player.rep_sacrifice = E(1)
                 for (let x = 1; x <= UPGS.replicanti.cols; x++) player.rep_upgs[x] = E(0)
             },
             effect(x=player.rep_galaxy) {
@@ -62,11 +67,25 @@ const FORMS = {
                 if (player.prestige.upgrades.includes(34)) ret = ret.mul(UPGS.prestige[34].effect())
                 if (ACHS.has(22)) ret = ret.mul(1.5)
                 if (ACHS.has(24)) ret = ret.mul(1.25)
+                if (player.inf.upgrades.includes(21)) return ret.add(1).root(2)
                 return ret.add(1).root(3)
             },
             bulk(x=player.replicanti) {
-                if (x.lt(1e12)) return E(0)
-                return x.div(1e12).max(1).logBase(1e6).root(1.25).root(CHALS.onChal("normal5")?4/3:1).add(1).floor()
+                if (x.mul(player.prestige.upgrades.includes(43) ? UPGS.prestige[43].effect() : 1).lt(1e12)) return E(0)
+                return x.mul(player.prestige.upgrades.includes(43) ? UPGS.prestige[43].effect() : 1).div(1e12).max(1).logBase(1e6).root(1.25).root(CHALS.onChal("normal5") || CHALS.onChal("inf1")?4/3:1).add(1).floor()
+            },
+
+        },
+
+        sacrifice: {
+            unl() { return CHALS.onChal("inf2") || player.chals.comps.includes("inf2") },
+            before() { return player.replicanti.log10().add(1).pow(0.9).div(player.rep_sacrifice).max(1) },
+            can() { return this.before().gt(1) },
+            doSac() {
+                if (this.can()) {
+                    player.rep_sacrifice = player.rep_sacrifice.mul(this.before())
+                    player.replicanti = E(1)
+                }
             },
         },
     },
@@ -77,7 +96,7 @@ const FORMS = {
             if (gain.lt(1)) return E(0)
             gain = gain.root(5)
             if (player.prestige.upgrades.includes(32)) gain = gain.mul(UPGS.prestige[32].effect())
-            if (CHALS.onChal("normal6")) gain = gain.pow(0.85)
+            if (CHALS.onChal("normal6") || CHALS.onChal("inf1")) gain = gain.pow(0.85)
             return gain.softcap(1e3,1/3,0).floor()
         },
         can() { return this.gain().gte(1) },
@@ -90,13 +109,13 @@ const FORMS = {
                 this.onReset()
             }
         },
-        onReset() {
+        onReset(force=false) {
             player.rep_galaxy = E(0)
-            FORMS.replicanti.galaxy.onReset()
+            FORMS.replicanti.galaxy.onReset(force)
         },
     },
     inf: {
-        reached() { return player.replicanti.gte(FORMS.INF) && !player.breakInf },
+        reached() { return player.replicanti.gte(FORMS.INF) && (player.chals.active.includes("normal") ? true : !player.breakInf) },
         seen() { return player.inf.times.gte(1) },
         gain() {
             let gain = E(1)
@@ -106,14 +125,19 @@ const FORMS = {
             if (player.inf.upgrades.includes(12)) gain = gain.mul(UPGS.post_inf[12].effect())
             return gain
         },
-        can() { return player.breakInf && this.gain().gte(1) },
+        can() {
+            if (player.chals.active.includes("inf")) return player.breakInf && CHALS.inf.canComplete()
+            return player.breakInf && this.gain().gte(1)
+        },
         reset() {
             if (this.reached() || this.can()) {
                 if (player.rep_galaxy.lte(0)) ACHS.unl(33)
                 if (player.inf.time < player.inf.best) player.inf.best = player.inf.time
-                if (player.chals.active.includes("normal") && !player.chals.comps.includes(player.chals.active)) {
-                    player.chals.comps.push(player.chals.active)
-                    ACHS.unl(25)
+                if (player.chals.active.includes("normal") || player.chals.active.includes("inf")) {
+                    if (!player.chals.comps.includes(player.chals.active)) player.chals.comps.push(player.chals.active)
+                    if (player.stats.chals_best[player.chals.active] === undefined) player.stats.chals_best[player.chals.active] = 999999999
+                    if (player.inf.time < player.stats.chals_best[player.chals.active]) player.stats.chals_best[player.chals.active] = player.inf.time
+                    if (player.chals.active.includes("normal")) ACHS.unl(25)
                     CHALS.exit()
                 }
                 player.inf.points = player.inf.points.add(this.gain())
@@ -122,14 +146,14 @@ const FORMS = {
                 this.onReset()
             }
         },
-        onReset() {
+        onReset(force=false) {
             player.inf.time = 0
             player.prestige.points = E(0)
-            if (!player.inf.upgrades.includes(13)) player.prestige.upgrades = []
-            FORMS.prestige.onReset()
+            if (!player.inf.upgrades.includes(13) || force) player.prestige.upgrades = []
+            FORMS.prestige.onReset(force)
         },
         replicanti: {
-            growth() { return UPGS.inf_rep[1].effect().root(FORMS.inf.comp.effect().nerf) },
+            growth() { return UPGS.inf_rep[1].effect().root(FORMS.inf.comp.effect().nerf).pow(player.chals.comps.includes('inf1')?player.chals.comps.length*0.5+1:1) },
             effect() {
                 let ret = player.inf.replicanti.log10().div(this.cap().log10().max(1)).add(1).add(FORMS.inf.comp.effect().buff).softcap(2,0.75,0)
                 return ret
@@ -152,6 +176,7 @@ const FORMS = {
                 let ret = {}
                 ret.buff = x
                 ret.nerf = x.add(1).pow(1.5)
+                if (ret.nerf.gte(25)) ret.nerf = ret.nerf.div(25).pow(2).mul(25)
                 ret.cap = E(10).pow(x.sub(9).max(0).pow(1.5))
                 return ret
             },

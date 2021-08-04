@@ -1,10 +1,10 @@
 const UPGS = {
     replicanti: {
         cols: 4,
-        can(x) { return player.replicanti.gte(this[x].cost()) && (x == 2 ? !CHALS.onChal("normal2") : true) },
+        can(x) { return player.replicanti.gte(this[x].cost()) && (x == 2 ? !(CHALS.onChal("normal2") || CHALS.onChal("inf1")) : true) },
         buy(x) {
             if (this.can(x)) {
-                player.replicanti = player.replicanti.sub(this[x].cost()).max(1)
+                if (!ACHS.has(34)) player.replicanti = player.replicanti.sub(this[x].cost()).max(1)
                 player.rep_upgs[x] = player.rep_upgs[x].add(1)
             }
         },
@@ -15,7 +15,7 @@ const UPGS = {
             if (this.can(x)) {
                 let bulk = this[x].bulk()
                 if (bulk.gt(player.rep_upgs[x])) {
-                    player.replicanti = player.replicanti.sub(this[x].cost(bulk.sub(1))).max(1)
+                    if (!ACHS.has(34)) player.replicanti = player.replicanti.sub(this[x].cost(bulk.sub(1))).max(1)
                     player.rep_upgs[x] = bulk
                 }
             }
@@ -25,7 +25,7 @@ const UPGS = {
             title: "Replicanti Storage",
             cost(x=player.rep_upgs[this.id]) { return E(2).pow(x.pow(1.5)).mul(10) },
             effect(x=player.rep_upgs[this.id]) {
-                let ret = E(2).mul(FORMS.replicanti.galaxy.effect()).mul(FORMS.inf.replicanti.effect()).softcap(10,1/2,0).mul(CHALS.onChal("normal4") ? 1 : UPGS.replicanti[4].effect()).pow(x)
+                let ret = E(2).mul(FORMS.replicanti.galaxy.effect()).mul(FORMS.inf.replicanti.effect()).softcap(10,1/2,0).mul(CHALS.onChal("normal4") || CHALS.onChal("inf1") ? 1 : UPGS.replicanti[4].effect()).pow(x)
                 return ret
             },
             desc(eff=this.effect()) { return `Make Replicanti penalty starts ${format(eff)}x later.` },
@@ -38,32 +38,32 @@ const UPGS = {
         2: {
             id: 2,
             title: "Replicanti Multiplier",
-            cost(x=player.rep_upgs[this.id]) { return E(10).pow(x.pow(1.5).pow(CHALS.onChal("normal3")?2:1)) },
+            cost(x=player.rep_upgs[this.id]) { return E(10).pow(x.pow(1.5).pow(CHALS.onChal("normal3") || CHALS.onChal("inf1")?2:1)) },
             effect(x=player.rep_upgs[this.id]) {
-                let lvl = x.mul(FORMS.replicanti.galaxy.effect()).mul(FORMS.inf.replicanti.effect()).mul(CHALS.onChal("normal4") ? UPGS.replicanti[4].effect() : 1)
+                let lvl = x.mul(FORMS.replicanti.galaxy.effect()).mul(FORMS.inf.replicanti.effect()).mul(CHALS.onChal("normal4") || CHALS.onChal("inf1") ? UPGS.replicanti[4].effect() : 1)
                 if (player.prestige.upgrades.includes(11)) lvl = lvl.mul(2)
                 if (player.prestige.upgrades.includes(12)) lvl = lvl.pow(UPGS.prestige[12].effect())
                 return lvl.div(5).add(1)
             },
             desc(eff=this.effect()) { return `Multiple Replicanti growth by ${format(eff)}x.` },
             bulk(x=player.replicanti) {
-                let bulk = x.logBase(10).root(1.5).root(CHALS.onChal("normal3")?2:1).add(1).floor()
+                let bulk = x.logBase(10).root(1.5).root(CHALS.onChal("normal3") || CHALS.onChal("inf1")?2:1).add(1).floor()
                 return bulk
             },
         },
         3: {
             id: 3,
             title: "Replicanti Power",
-            cost(x=player.rep_upgs[this.id]) { return E(10).pow(x.pow(2).pow(CHALS.onChal("normal3")?2:1)).mul(1000) },
+            cost(x=player.rep_upgs[this.id]) { return E(10).pow(x.pow(2).pow(CHALS.onChal("normal3") || CHALS.onChal("inf1")?2:1)).mul(1000) },
             effect(x=player.rep_upgs[this.id]) {
-                let lvl = x.mul(FORMS.inf.replicanti.effect()).mul(CHALS.onChal("normal4") ? UPGS.replicanti[4].effect() : 1)
+                let lvl = x.mul(FORMS.inf.replicanti.effect()).mul(CHALS.onChal("normal4") || CHALS.onChal("inf1") ? UPGS.replicanti[4].effect() : 1)
                 if (player.prestige.upgrades.includes(12)) lvl = lvl.pow(UPGS.prestige[12].effect())
                 return lvl.div(5).mul(FORMS.replicanti.galaxy.effect()).add(1).softcap(100,1/3,0).softcap(1000,1/3,0)
             },
             desc(eff=this.effect()) { return `Make Replicanti growth is ^${format(eff)} stronger.` },
             bulk(x=player.replicanti) {
                 if (x.div(1000).lt(1)) return E(0)
-                let bulk = x.div(1000).logBase(10).root(2).root(CHALS.onChal("normal3")?2:1).add(1).floor()
+                let bulk = x.div(1000).logBase(10).root(2).root(CHALS.onChal("normal3") || CHALS.onChal("inf1")?2:1).add(1).floor()
                 return bulk
             },
         },
@@ -74,7 +74,7 @@ const UPGS = {
             effect(x=player.rep_upgs[this.id]) {
                 let ret = player.replicanti.log10().mul(x).mul(FORMS.replicanti.galaxy.effect()).mul(FORMS.inf.replicanti.effect()).add(1).root(10)
                 if (player.prestige.upgrades.includes(22)) ret = ret.pow(2)
-                if (CHALS.onChal("normal4")) ret = ret.pow(4)
+                if (CHALS.onChal("normal4") || CHALS.onChal("inf1")) ret = ret.pow(4)
                 return ret
             },
             desc(eff=this.effect()) { return `Make Replicanti Storage is ${format(eff)}x stronger based on replicanti.` },
@@ -203,6 +203,16 @@ const UPGS = {
             desc: "Prestige upgrade 10 formula is better.",
             cost: E(1e36),
         },
+        43: {
+            unl() { return player.breakInf },
+            desc: "Replicanti Galaxy is cheaper based on Replicanti.",
+            cost: E(1e54),
+            effect() {
+                let ret = player.replicanti.root(4)
+                return ret
+            },
+            effDesc(eff=this.effect()) { return "/"+format(eff) },
+        },
     },
     inf_rep: {
         cols: 1,
@@ -241,7 +251,7 @@ const UPGS = {
     },
     post_inf: {
         cols: 4,
-        rows: 1,
+        rows: 2,
         can(x) { return player.inf.points.gte(this[x].cost) && !player.inf.upgrades.includes(x) },
         buy(x) {
             if (this.can(x)) {
@@ -255,7 +265,7 @@ const UPGS = {
             cost: E(100),
             effect() {
                 let ret = player.inf.points.add(1).pow(20)
-                return ret
+                return ret.softcap(1e100,1/3,0)
             },
             effDesc(eff=this.effect()) { return "x"+format(eff)+" later" },
         },
@@ -278,6 +288,16 @@ const UPGS = {
                 return ret
             },
             effDesc(eff=this.effect()) { return format(eff)+"x stronger" },
+        },
+        14: {
+            unl() { return true },
+            desc: "Replicanti Slowdown is 15% weaker.",
+            cost: E(2.5e5),
+        },
+        21: {
+            unl() { return true },
+            desc: "Replicanti galaxy formula is better.",
+            cost: E(1e7),
         },
     },
 }

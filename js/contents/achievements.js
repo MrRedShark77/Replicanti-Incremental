@@ -44,6 +44,9 @@ const ACHS = {
         31: "NOICE",
         32: "HA GO BRRR",
         33: "Anti-Galaxy",
+        34: "New Challenger",
+        36: "Challenge Boy",
+        38: "Replicanti^2",
     },
     descs: {
         0: "Placeholder.",
@@ -68,7 +71,10 @@ const ACHS = {
 
         31: "Reach format(6.9e420) Replicanti.",
         32: "Go Infinity in under 10 seconds.",
-        33: "Go Infinity without Replicanti Galaxies."
+        33: "Go Infinity without Replicanti Galaxies.",
+        34: "Unlock Infinity challenge.",
+        36: "Get the sum of all of challenges times under 1 minute.",
+        38: "Reach format(9.9999e999) Replicanti.",
     },
     rewards: {
         21: "Start with format(1e5) Replicanti.",
@@ -78,6 +84,8 @@ const ACHS = {
         27: "Double Infinity points gain.",
 
         32: "Start with format(1e50) Replicanti.",
+        34: "Replicanti Upgrades no longer spent Replicanti.",
+        38: "Replicanti Growth is stronger based on Replicanti at a reduced rate.",
     },
     checks: {
         11() { return player.rep_upgs[2].gte(1) },
@@ -101,5 +109,8 @@ const ACHS = {
 
         31() { return player.replicanti.gte("6.9e420") },
         32() { return player.inf.best < 10 },
+        34() { return player.chals.inf_unls > 0 },
+        36() { return CHALS.sumTotal().normal <= 60 },
+        38() { return player.replicanti.gte("9.9999e999") },
     }
 }
