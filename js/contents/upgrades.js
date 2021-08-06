@@ -213,6 +213,16 @@ const UPGS = {
             },
             effDesc(eff=this.effect()) { return "/"+format(eff) },
         },
+        44: {
+            unl() { return player.breakInf && FORMS.replicanti.sacrifice.unl() },
+            desc: "Replicanti Sacrifice boost Prestige points gain.",
+            cost: E(1e120),
+            effect() {
+                let ret = E(2).pow(player.rep_sacrifice.pow(0.625))
+                return ret
+            },
+            effDesc(eff=this.effect()) { return format(eff)+"x" },
+        },
     },
     inf_rep: {
         cols: 1,
@@ -298,6 +308,26 @@ const UPGS = {
             unl() { return true },
             desc: "Replicanti galaxy formula is better.",
             cost: E(1e7),
+        },
+        22: {
+            unl() { return FORMS.replicanti.sacrifice.unl() },
+            desc: "Replicanti Sacrifice boost Infinity points gain.",
+            cost: E(5e9),
+            effect() {
+                let ret = E(2).pow(player.rep_sacrifice.pow(0.3))
+                return ret
+            },
+            effDesc(eff=this.effect()) { return format(eff)+"x" },
+        },
+        23: {
+            unl() { return true },
+            desc: "Replicanti Growth hardcap starts later based on Replicanti.",
+            cost: E(1e13),
+            effect() {
+                let ret = player.replicanti
+                return ret
+            },
+            effDesc(eff=this.effect()) { return format(eff)+"x later" },
         },
     },
 }

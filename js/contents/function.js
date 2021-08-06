@@ -10,18 +10,25 @@ const FORMS = {
             if (this.sacrifice.unl()) gain = gain.pow(player.rep_sacrifice)
             gain = gain.pow(UPGS.replicanti[3].effect())
             if (ACHS.has(38)) gain = gain.pow(player.replicanti.log10().add(1).log10().add(1))
-            return gain.root(this.penalty()).min(FORMS.INF)
+            return gain.root(this.penalty()).min(this.cap())
+        },
+        cap() {
+            let a = FORMS.INF
+            if (player.inf.upgrades.includes(23)) a = a.mul(UPGS.post_inf[23].effect())
+            return a
         },
         limit() {
             let limit = E(10).mul(UPGS.replicanti[1].effect())
-            return limit
+            return limit.softcap("e2000",0.25,0)
         },
         penalty(x = player.replicanti) {
             if (x.lt(this.limit())) return E(1)
             let a = x.logBase(this.limit())
             a = a.add(1).pow(a).pow(this.superPenalty())
             if (player.prestige.upgrades.includes(13)) a = a.pow(0.75)
+            if (player.chals.comps.includes("inf3")) a = a.pow(0.75)
             if (CHALS.onChal("normal1") || CHALS.onChal("inf1")) a = a.pow(1.5)
+            if (CHALS.onChal("inf3")) a = a.pow(2)
             return a.max(1)
         },
         superLimit() {
@@ -30,13 +37,14 @@ const FORMS = {
             if (player.prestige.upgrades.includes(31)) a = a.mul(UPGS.prestige[31].effect())
             if (player.inf.upgrades.includes(11)) a = a.mul(UPGS.post_inf[11].effect())
             if (player.prestige.upgrades.includes(33)) a = a.pow(1.15)
-            return a.max(1)
+            return a.max(1).softcap("e2000",0.25,0)
         },
         superPenalty(x = player.replicanti) {
             if (x.lt(this.superLimit())) return E(1)
             let a = x.logBase(this.superLimit())
             if (a.lte(1)) return E(1)
             a = a.pow(2).mul(3).pow(a)
+            if (CHALS.onChal("inf3")) a = a.pow(2)
             if (player.inf.upgrades.includes(14)) a = a.pow(0.85)
             return a
         },
@@ -80,11 +88,12 @@ const FORMS = {
         sacrifice: {
             unl() { return CHALS.onChal("inf2") || player.chals.comps.includes("inf2") },
             before() { return player.replicanti.log10().add(1).pow(0.9).div(player.rep_sacrifice).max(1) },
+            set() { return player.rep_sacrifice.mul(this.before()).softcap(1500,0.75,0) },
             can() { return this.before().gt(1) },
             doSac() {
                 if (this.can()) {
-                    player.rep_sacrifice = player.rep_sacrifice.mul(this.before())
-                    player.replicanti = E(1)
+                    player.rep_sacrifice = this.set()
+                    if (!ACHS.has(37)) player.replicanti = E(1)
                 }
             },
         },
@@ -96,6 +105,7 @@ const FORMS = {
             if (gain.lt(1)) return E(0)
             gain = gain.root(5)
             if (player.prestige.upgrades.includes(32)) gain = gain.mul(UPGS.prestige[32].effect())
+            if (player.prestige.upgrades.includes(44)) gain = gain.mul(UPGS.prestige[44].effect())
             if (CHALS.onChal("normal6") || CHALS.onChal("inf1")) gain = gain.pow(0.85)
             return gain.softcap(1e3,1/3,0).floor()
         },
@@ -123,7 +133,8 @@ const FORMS = {
             if (gain.lt(10) && player.breakInf) return E(0)
             if (ACHS.has(28)) gain = gain.mul(2)
             if (player.inf.upgrades.includes(12)) gain = gain.mul(UPGS.post_inf[12].effect())
-            return gain
+            if (player.inf.upgrades.includes(22)) gain = gain.mul(UPGS.post_inf[22].effect())
+            return gain.softcap(1e16,0.5,0).floor()
         },
         can() {
             if (player.chals.active.includes("inf")) return player.breakInf && CHALS.inf.canComplete()
@@ -138,6 +149,7 @@ const FORMS = {
                     if (player.stats.chals_best[player.chals.active] === undefined) player.stats.chals_best[player.chals.active] = 999999999
                     if (player.inf.time < player.stats.chals_best[player.chals.active]) player.stats.chals_best[player.chals.active] = player.inf.time
                     if (player.chals.active.includes("normal")) ACHS.unl(25)
+                    if (player.chals.active.includes("inf")) ACHS.unl(35)
                     CHALS.exit()
                 }
                 player.inf.points = player.inf.points.add(this.gain())

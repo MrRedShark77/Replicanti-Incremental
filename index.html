@@ -79,7 +79,7 @@
                                 </div><div style='min-width: 300px; margin: 5px;' v-if="FORMS.replicanti.sacrifice.unl()">
                                     <div style='text-align: left;'>Replicanti Sacrifice <b style="color: black">(^{{ format(player.rep_sacrifice) }})</b></div><br>
                                     <button class='btn' v-bind:class="{locked: !FORMS.replicanti.sacrifice.can()}" @click="FORMS.replicanti.sacrifice.doSac()">
-                                        Sacrifice your Replicanti, but makes Replicanti growth is <b>^{{ format(player.rep_sacrifice) }} -> ^{{ format(player.rep_sacrifice.mul(FORMS.replicanti.sacrifice.before())) }}</b> stonger.
+                                        Sacrifice your Replicanti, but makes Replicanti growth is <b>^{{ format(player.rep_sacrifice) }} -> ^{{ format(FORMS.replicanti.sacrifice.set()) }}</b> stonger.
                                     </button>
                                 </div>
                             </div>

@@ -73,7 +73,7 @@ const CHALS = {
         },
     },
     inf: {
-        requires: [E('e1100'), E('e1360')],
+        requires: [E('e1100'), E('e1350'), E('e2350')],
         canComplete() { return player.replicanti.gte(this[player.chals.active.split("inf")[1]].goal) },
         canUnlock() { return player.replicanti.gte(this.requires[player.chals.inf_unls]) },
         unlock() { if (this.canUnlock()) player.chals.inf_unls++ },
@@ -81,7 +81,7 @@ const CHALS = {
         onEnter() {
             FORMS.inf.onReset(true)
         },
-        length: 2,
+        length: 3,
         1: {
             goal: E('e480'),
             desc: "All previous challenges at once",
@@ -91,6 +91,11 @@ const CHALS = {
             goal: E('e500'),
             desc: "Replicant Galaxy is disabled, but you can sacrifice Replicanti",
             reward: "Unlock Replicanti Sacrifice",
+        },
+        3: {
+            goal: E('e640'),
+            desc: "Replicanti Penalty, Replicanti Slowdown is twice stronger",
+            reward: "Replicanti Penalty is 25% weaker",
         },
     },
 }
