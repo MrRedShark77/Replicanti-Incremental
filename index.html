@@ -107,10 +107,10 @@
                     </div>
                 </div><div v-if="player.tab[0] == 1">
                     <button class="btn" onclick="save()">Save</button>
-                    <button class="btn" onclick="if (confirm('You wanted to RESET your progress to new game?')) {wipe(); location.reload()}">Hard Reset</button>
+                    <button class="btn" onclick="if (confirm('You wanted to RESET your progress to new game?')) {wipe(); save(); location.reload()}">Hard Reset</button>
                     <button class="btn" onclick="exporty()">Export</button>
                     <button class="btn" onclick="importy()">Import</button><br><br>
-                    Replicanti Incremental Prototype v0.2.1 - made by MrRedShark77<br>
+                    Replicanti Incremental Prototype v0.2.1.1 - made by MrRedShark77<br>
                 </div><div v-if="player.tab[0] == 2" style="color: black;">
                     <div v-if="player.tab[1] == 0">
                         Your best Replicanti is {{ format(player.stats.best_rep) }}<br>
