@@ -46,11 +46,13 @@
                 </div>
                 You have <h2>{{ format(player.replicanti) }}</h2> replicanti<br>
                 ({{ format(FORMS.replicanti.growth()) }}x/s)<br>
-                (+{{ format(FORMS.calc_OoM(FORMS.replicanti.growth())) }} OoMs/s)<br><br><div style="height: 45px">
+                (+{{ format(FORMS.calc_OoM(FORMS.replicanti.growth())) }} OoMs/s)<br><br><div style="height: 70px">
                     <span v-if="FORMS.replicanti.penalty().gt(1)">
                         Beyond <h3>{{ format(FORMS.replicanti.limit()) }}</h3> replicanti, make their growth is rooted by <h3>{{ format(FORMS.replicanti.penalty()) }}</h3>
                     </span><br><span v-if="FORMS.replicanti.superPenalty().gt(1)" style="color: darkred;">
                         Beyond <h3 style="color: darkred;">{{ format(FORMS.replicanti.superLimit()) }}</h3> replicanti, make replicanti penalty is raised by <h3 style="color: darkred;">{{ format(FORMS.replicanti.superPenalty()) }}</h3>
+                    </span><br><span v-if="FORMS.replicanti.hyperPenalty().gt(1)" style="color: #c70000;">
+                        Beyond <h3 style="color: #c70000;">{{ format(FORMS.replicanti.hyperLimit()) }}</h3> replicanti, make replicanti slowdown is raised by <h3 style="color: #c70000;">{{ format(FORMS.replicanti.hyperPenalty()) }}</h3>
                     </span>
                 </div><br>
                 <div v-if="player.tab[0] == 0">
@@ -110,7 +112,7 @@
                     <button class="btn" onclick="if (confirm('You wanted to RESET your progress to new game?')) {wipe(); save(); location.reload()}">Hard Reset</button>
                     <button class="btn" onclick="exporty()">Export</button>
                     <button class="btn" onclick="importy()">Import</button><br><br>
-                    Replicanti Incremental Prototype v0.2.1.1 - made by MrRedShark77<br>
+                    Replicanti Incremental Prototype v0.2.1.2 - made by MrRedShark77<br>
                 </div><div v-if="player.tab[0] == 2" style="color: black;">
                     <div v-if="player.tab[1] == 0">
                         Your best Replicanti is {{ format(player.stats.best_rep) }}<br>
@@ -213,7 +215,12 @@
                                         </button>
                                     </div>
                                 </div>
-                            </div>
+                            </div><br><br>
+                            <button class='btn inf' v-bind:class="{locked: !FORMS.inf.mult.can()}" onclick="FORMS.inf.mult.buy()">
+                                Multiply Infinity points gain.<br>
+                                Currently: {{ format(FORMS.inf.mult.effect(),0) }}x<br>
+                                Cost: {{ format(FORMS.inf.mult.cost(),0) }} Infinity points.
+                            </button>
                         </div>
                     </div><div v-else>
                         Need to reach {{ format(1.79e308) }} replicanti to Infinity.

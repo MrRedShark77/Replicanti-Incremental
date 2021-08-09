@@ -19,7 +19,7 @@ const FORMS = {
         },
         limit() {
             let limit = E(10).mul(UPGS.replicanti[1].effect())
-            return limit.softcap("e2000",0.25,0)
+            return limit
         },
         penalty(x = player.replicanti) {
             if (x.lt(this.limit())) return E(1)
@@ -37,16 +37,27 @@ const FORMS = {
             if (player.prestige.upgrades.includes(31)) a = a.mul(UPGS.prestige[31].effect())
             if (player.inf.upgrades.includes(11)) a = a.mul(UPGS.post_inf[11].effect())
             if (player.prestige.upgrades.includes(33)) a = a.pow(1.15)
-            return a.max(1).softcap("e2000",0.25,0)
+            if (!player.inf.upgrades.includes(31)) a = a.softcap("e2000",0.5,0)
+            return a.max(1)
         },
         superPenalty(x = player.replicanti) {
             if (x.lt(this.superLimit())) return E(1)
             let a = x.logBase(this.superLimit())
             if (a.lte(1)) return E(1)
-            a = a.pow(2).mul(3).pow(a)
+            a = a.pow(2).mul(3).pow(a).pow(this.hyperPenalty())
             if (CHALS.onChal("inf3")) a = a.pow(2)
             if (player.inf.upgrades.includes(14)) a = a.pow(0.85)
             return a
+        },
+        hyperLimit() {
+            let limit = E(2).pow(E(2).pow(15))
+            return limit
+        },
+        hyperPenalty(x = player.replicanti) {
+            if (x.lt(this.hyperLimit())) return E(1)
+            let a = x.logBase(this.hyperLimit())
+            a = a.pow(a.mul(2))
+            return a.max(1)
         },
 
         galaxy: {
@@ -88,7 +99,7 @@ const FORMS = {
         sacrifice: {
             unl() { return CHALS.onChal("inf2") || player.chals.comps.includes("inf2") },
             before() { return player.replicanti.log10().add(1).pow(0.9).div(player.rep_sacrifice).max(1) },
-            set() { return player.rep_sacrifice.mul(this.before()).softcap(1500,0.75,0) },
+            set() { return player.rep_sacrifice.mul(this.before()) },
             can() { return this.before().gt(1) },
             doSac() {
                 if (this.can()) {
@@ -134,7 +145,9 @@ const FORMS = {
             if (ACHS.has(28)) gain = gain.mul(2)
             if (player.inf.upgrades.includes(12)) gain = gain.mul(UPGS.post_inf[12].effect())
             if (player.inf.upgrades.includes(22)) gain = gain.mul(UPGS.post_inf[22].effect())
-            return gain.softcap(1e16,0.5,0).floor()
+            if (player.chals.comps.includes("inf4")) gain = gain.mul(E(2).pow(player.chals.comps.length))
+            gain = gain.mul(this.mult.effect())
+            return gain.softcap(1e17,0.5,0).floor()
         },
         can() {
             if (player.chals.active.includes("inf")) return player.breakInf && CHALS.inf.canComplete()
@@ -167,7 +180,9 @@ const FORMS = {
         replicanti: {
             growth() { return UPGS.inf_rep[1].effect().root(FORMS.inf.comp.effect().nerf).pow(player.chals.comps.includes('inf1')?player.chals.comps.length*0.5+1:1) },
             effect() {
-                let ret = player.inf.replicanti.log10().div(this.cap().log10().max(1)).add(1).add(FORMS.inf.comp.effect().buff).softcap(2,0.75,0)
+                let ret = player.inf.replicanti.log10().div(this.cap().log10().max(1)).add(1).add(FORMS.inf.comp.effect().buff)
+                if (!player.inf.upgrades.includes(24)) ret = ret.softcap(2,0.75,0)
+                if (CHALS.onChal("inf4")) return E(1)
                 return ret
             },
             cap() { return E(1e10).mul(FORMS.inf.comp.effect().cap) },
@@ -201,6 +216,19 @@ const FORMS = {
             && player.chals.comps.includes("normal5") 
             && player.chals.comps.includes("normal6") },
             msg() { return player.breakInf ? "Fix Infinity" : "Break Infinity" },
+        },
+        mult: {
+            cost(x=player.inf.mults) { return E(10).pow(x).mul(1e15) },
+            bulk() { return player.inf.points.gte(1e15) ? player.inf.points.div(1e15).log10().add(1).floor() : E(0) },
+            can() { return player.inf.points.gte(this.cost()) },
+            buy() {
+                if (this.can()) {
+                    let bulk = this.bulk()
+                    player.inf.points = player.inf.points.sub(this.cost(bulk.sub(1)))
+                    player.inf.mults = bulk
+                }
+            },
+            effect(x=player.inf.mults) { return E(2).pow(x) },
         },
     },
 }

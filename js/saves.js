@@ -57,6 +57,7 @@ const PLAYER_DATA = {
         time: 0,
         best: 1e9,
         points: E(0),
+        mults: E(0),
         times: E(0),
         replicanti: E(1),
         comp: E(0),
@@ -138,6 +139,7 @@ function convertToExpNum() {
 
     player.inf.points = ex(player.inf.points)
     player.inf.times = ex(player.inf.times)
+    player.inf.mults = ex(player.inf.mults)
     player.inf.replicanti = ex(player.inf.replicanti)
     player.inf.comp = ex(player.inf.comp)
 }

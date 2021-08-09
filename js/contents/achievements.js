@@ -18,7 +18,7 @@ const ACHS = {
         for (let r = 1; r <= this.rows; r++) for (let c = 1; c <= this.cols; c++) if (this.checks[r*10+c] !== undefined ? this.checks[r*10+c]() : false) this.unl(r*10+c)
     },
     cols: 8,
-    rows: 3,
+    rows: 4,
 
     names: {
         0: "Placeholder",
@@ -49,6 +49,9 @@ const ACHS = {
         36: "Challenge Boy",
         37: "Got'em about happy?",
         38: "Replicanti^2",
+
+        42: "Meta-Prestige",
+        47: "No Inflation",
     },
     descs: {
         0: "Placeholder.",
@@ -79,6 +82,9 @@ const ACHS = {
         36: "Get the sum of all of challenges times under 1 minute.",
         37: "Get ^format(1000) of Replicanti Sacrifice.",
         38: "Reach format(9.9999e999) Replicanti.",
+
+        42: "Get format(1.798e308) Prestige points.",
+        47: "Reach format(ee4) Replicanti.",
     },
     rewards: {
         21: "Start with format(1e5) Replicanti.",
@@ -91,6 +97,8 @@ const ACHS = {
         34: "Replicanti Upgrades no longer spent Replicanti.",
         37: "Replicanti Sacrifice no longer resets Replicanti.",
         38: "Replicanti Growth is stronger based on Replicanti at a reduced rate.",
+
+        47: "Why are you wanted to see Inflation? nope..."
     },
     checks: {
         11() { return player.rep_upgs[2].gte(1) },
@@ -118,5 +126,8 @@ const ACHS = {
         36() { return CHALS.sumTotal().normal <= 60 },
         37() { return player.rep_sacrifice.gte(1e3) },
         38() { return player.replicanti.gte("9.9999e999") },
+
+        42() { return player.prestige.points.gte(FORMS.INF) },
+        47() { return player.replicanti.gte("ee4") },
     }
 }

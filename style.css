@@ -96,6 +96,20 @@ button {
 	background-color: #c800f0;
 }
 
+.btn.gal,
+.tab_btn.gal {
+	color: #ffffff;
+	text-shadow: 0 0 10px white, 0 0 10px white, 0 0 5px white;
+	background-image: url("images/galaxy1.jpeg");
+	background-position: center;
+	background-size: 250%;
+}
+
+.btn.gal:not(.locked):hover,
+.tab_btn.gal:hover {
+	background-size: 150%;
+}
+
 .btn:not(.locked):hover {
 	transform: scale(1.15);
 }

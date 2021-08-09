@@ -209,7 +209,7 @@ const UPGS = {
             cost: E(1e54),
             effect() {
                 let ret = player.replicanti.root(4)
-                return ret
+                return ret.softcap("e1500",0.5,0)
             },
             effDesc(eff=this.effect()) { return "/"+format(eff) },
         },
@@ -261,7 +261,7 @@ const UPGS = {
     },
     post_inf: {
         cols: 4,
-        rows: 2,
+        rows: 3,
         can(x) { return player.inf.points.gte(this[x].cost) && !player.inf.upgrades.includes(x) },
         buy(x) {
             if (this.can(x)) {
@@ -328,6 +328,16 @@ const UPGS = {
                 return ret
             },
             effDesc(eff=this.effect()) { return format(eff)+"x later" },
+        },
+        24: {
+            unl() { return true },
+            desc: "Remove effect softcap from Infinity Replicanti.",
+            cost: E(1e18),
+        },
+        31: {
+            unl() { return true },
+            desc: "Remove Replicanti Slowdown limit softcap.",
+            cost: E(1e20),
         },
     },
 }

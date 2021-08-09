@@ -12,6 +12,7 @@ const TABS = {
         { id: "Challenges", unl() { return FORMS.inf.seen() }, notify() { return CHALS.inf.canUnlock() } },
         { id: "Infinity", seen() { return FORMS.inf.seen() }, style: "inf", notify() { return FORMS.inf.comp.can() } },
         { id: "Eternity", unl() { return FORMS.inf.seen() }, seen() { return false }, style: "eter" },
+        { id: "Galactic", unl() { return false }, seen() { return false }, style: "gal" },
     ],
     2: {
         0: [

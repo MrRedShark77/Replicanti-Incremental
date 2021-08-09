@@ -2,8 +2,9 @@ const AUTOS = {
     update() {
         for (let x = 1; x <= 4; x++) if (player.autobuyer[this[x].id]) UPGS.replicanti.max(x)
         if (player.autobuyer["auto_rg"]) FORMS.replicanti.galaxy.reset(true)
+        if (player.autobuyer["auto_rsac"]) FORMS.replicanti.sacrifice.doSac()
     },
-    length: 5,
+    length: 6,
     1: {
         dis: "Replicanti Storage autobuyer",
         id: "auto_rs",
@@ -38,5 +39,12 @@ const AUTOS = {
         unl() { return true },
         see() { return player.chals.comps.includes("normal5") },
         see_desc: "Complete challenge 5 to unlock.",
+    },
+    6: {
+        dis: "Replicanti Sacrifice autobuyer",
+        id: "auto_rsac",
+        unl() { return FORMS.inf.seen() },
+        see() { return player.chals.comps.includes("inf4") },
+        see_desc: "Complete Infinity challenge 4 to unlock.",
     },
 }
