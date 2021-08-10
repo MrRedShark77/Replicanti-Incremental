@@ -73,7 +73,7 @@ const CHALS = {
         },
     },
     inf: {
-        requires: [E('e1100'), E('e1350'), E('e2350'), E('e3800')],
+        requires: [E('e1100'), E('e1350'), E('e2350'), E('e3800'), E('e10300'), E('e11500')],
         canComplete() { return player.replicanti.gte(this[player.chals.active.split("inf")[1]].goal) },
         canUnlock() { return player.replicanti.gte(this.requires[player.chals.inf_unls]) },
         unlock() { if (this.canUnlock()) player.chals.inf_unls++ },
@@ -81,7 +81,7 @@ const CHALS = {
         onEnter() {
             FORMS.inf.onReset(true)
         },
-        length: 4,
+        length: 6,
         1: {
             goal: E('e480'),
             desc: "All previous challenges at once",
@@ -101,6 +101,16 @@ const CHALS = {
             goal: E('e2300'),
             desc: "Infinity Replicanti effects are disabled",
             reward: "Infinity points gain is increased by 2x for every challenge completed, unlock Replicanti Sacrifice autobuyer",
+        },
+        5: {
+            goal: E('e4400'),
+            desc: "Replicanti Sacrifice is disabled",
+            reward: "Infinity points gain softcap is 50% weaker",
+        },
+        6: {
+            goal: E('e1450'),
+            desc: "You cannot buy Prestige upgrades except 1 and 2 row",
+            reward: "Prestige points gain softcap is sightly weaker",
         },
     },
 }

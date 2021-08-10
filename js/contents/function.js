@@ -50,8 +50,9 @@ const FORMS = {
             return a
         },
         hyperLimit() {
-            let limit = E(2).pow(E(2).pow(15))
-            return limit
+            let a = E(2).pow(E(2).pow(15))
+            if (player.inf.upgrades.includes(33)) a = a.mul(UPGS.post_inf[33].effect())
+            return a
         },
         hyperPenalty(x = player.replicanti) {
             if (x.lt(this.hyperLimit())) return E(1)
@@ -77,6 +78,7 @@ const FORMS = {
                 if (ACHS.has(21) && !force) player.replicanti = E(1e5)
                 if (ACHS.has(26) && !force) player.replicanti = E(1e10)
                 if (ACHS.has(32) && !force) player.replicanti = E(1e50)
+                if (ACHS.has(43) && !force) player.replicanti = E(1e100)
                 player.rep_sacrifice = E(1)
                 for (let x = 1; x <= UPGS.replicanti.cols; x++) player.rep_upgs[x] = E(0)
             },
@@ -100,7 +102,7 @@ const FORMS = {
             unl() { return CHALS.onChal("inf2") || player.chals.comps.includes("inf2") },
             before() { return player.replicanti.log10().add(1).pow(0.9).div(player.rep_sacrifice).max(1) },
             set() { return player.rep_sacrifice.mul(this.before()) },
-            can() { return this.before().gt(1) },
+            can() { return this.before().gt(1) && !CHALS.onChal("inf5") },
             doSac() {
                 if (this.can()) {
                     player.rep_sacrifice = this.set()
@@ -117,8 +119,9 @@ const FORMS = {
             gain = gain.root(5)
             if (player.prestige.upgrades.includes(32)) gain = gain.mul(UPGS.prestige[32].effect())
             if (player.prestige.upgrades.includes(44)) gain = gain.mul(UPGS.prestige[44].effect())
+            if (player.inf.upgrades.includes(34)) gain = gain.mul(UPGS.post_inf[34].effect())
             if (CHALS.onChal("normal6") || CHALS.onChal("inf1")) gain = gain.pow(0.85)
-            return gain.softcap(1e3,1/3,0).floor()
+            return gain.softcap(1e3,player.chals.comps.includes("inf6")?0.5:1/3,0).floor()
         },
         can() { return this.gain().gte(1) },
         reset() {
@@ -147,7 +150,7 @@ const FORMS = {
             if (player.inf.upgrades.includes(22)) gain = gain.mul(UPGS.post_inf[22].effect())
             if (player.chals.comps.includes("inf4")) gain = gain.mul(E(2).pow(player.chals.comps.length))
             gain = gain.mul(this.mult.effect())
-            return gain.softcap(1e17,0.5,0).floor()
+            return gain.softcap(1e17,player.chals.comps.includes("inf5")?0.75:0.5,0).floor()
         },
         can() {
             if (player.chals.active.includes("inf")) return player.breakInf && CHALS.inf.canComplete()
@@ -162,7 +165,10 @@ const FORMS = {
                     if (player.stats.chals_best[player.chals.active] === undefined) player.stats.chals_best[player.chals.active] = 999999999
                     if (player.inf.time < player.stats.chals_best[player.chals.active]) player.stats.chals_best[player.chals.active] = player.inf.time
                     if (player.chals.active.includes("normal")) ACHS.unl(25)
-                    if (player.chals.active.includes("inf")) ACHS.unl(35)
+                    if (player.chals.active.includes("inf")) {
+                        if (player.rep_sacrifice.lte(1)) ACHS.unl(44)
+                        ACHS.unl(35)
+                    }
                     CHALS.exit()
                 }
                 player.inf.points = player.inf.points.add(this.gain())
@@ -204,6 +210,7 @@ const FORMS = {
                 ret.buff = x
                 ret.nerf = x.add(1).pow(1.5)
                 if (ret.nerf.gte(25)) ret.nerf = ret.nerf.div(25).pow(2).mul(25)
+                if (player.inf.upgrades.includes(32)) ret.nerf = ret.nerf.pow(0.5)
                 ret.cap = E(10).pow(x.sub(9).max(0).pow(1.5))
                 return ret
             },

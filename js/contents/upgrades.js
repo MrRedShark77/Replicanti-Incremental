@@ -88,7 +88,8 @@ const UPGS = {
     prestige: {
         cols: 4,
         rows: 4,
-        can(x) { return player.prestige.points.gte(this[x].cost) && !player.prestige.upgrades.includes(x) },
+        can(x) { return player.prestige.points.gte(this[x].cost) && !player.prestige.upgrades.includes(x)
+        && (CHALS.onChal("inf6") ? x <= 24 : true) },
         buy(x) {
             if (this.can(x)) {
                 player.prestige.points = player.prestige.points.sub(this[x].cost)
@@ -248,6 +249,7 @@ const UPGS = {
             cost(x=player.inf_rep_upgs[this.id]) { return E(1.5).pow(x.pow(1.5)).floor() },
             effect(x=player.inf_rep_upgs[this.id]) {
                 let lvl = x
+                if (player.inf.upgrades.includes(32)) lvl = lvl.add(UPGS.post_inf[32].effect())
                 if (player.inf.upgrades.includes(13)) lvl = lvl.mul(UPGS.post_inf[13].effect())
                 return lvl.mul(0.01).add(1)
             },
@@ -325,7 +327,7 @@ const UPGS = {
             cost: E(1e13),
             effect() {
                 let ret = player.replicanti
-                return ret
+                return ret.min("e5000")
             },
             effDesc(eff=this.effect()) { return format(eff)+"x later" },
         },
@@ -338,6 +340,36 @@ const UPGS = {
             unl() { return true },
             desc: "Remove Replicanti Slowdown limit softcap.",
             cost: E(1e20),
+        },
+        32: {
+            unl() { return true },
+            desc: "Infinity Compressors adds free Infinity Replicanti Multipliers, and Infinity Compressor debuff is 50% weaker.",
+            cost: E(1e33),
+            effect() {
+                let ret = player.inf.comp
+                return ret
+            },
+            effDesc(eff=this.effect()) { return "+"+format(eff,0) },
+        },
+        33: {
+            unl() { return true },
+            desc: "Replicanti Slowdown^2 starts later based on unspent Prestige points.",
+            cost: E(1e44),
+            effect() {
+                let ret = player.prestige.points.add(1)
+                return ret
+            },
+            effDesc(eff=this.effect()) { return format(eff)+"x later" },
+        },
+        34: {
+            unl() { return true },
+            desc: "Infinity Compressors boosts Prestige points gain.",
+            cost: E(1e67),
+            effect() {
+                let ret = E(10).pow(player.inf.comp.pow(1.5))
+                return ret
+            },
+            effDesc(eff=this.effect()) { return format(eff)+"x" },
         },
     },
 }

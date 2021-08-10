@@ -50,7 +50,10 @@ const ACHS = {
         37: "Got'em about happy?",
         38: "Replicanti^2",
 
+        41: "Challenged Master",
         42: "Meta-Prestige",
+        43: "Fastest life on life",
+        44: "Dimensional Sacrifice",
         47: "No Inflation",
     },
     descs: {
@@ -83,7 +86,10 @@ const ACHS = {
         37: "Get ^format(1000) of Replicanti Sacrifice.",
         38: "Reach format(9.9999e999) Replicanti.",
 
+        41: "Complete all of Infinity challenges.",
         42: "Get format(1.798e308) Prestige points.",
+        43: "Go Infinity in under one second.",
+        44: "Complete Infinity challenge 2 without sacrifice Replicanti.",
         47: "Reach format(ee4) Replicanti.",
     },
     rewards: {
@@ -98,6 +104,7 @@ const ACHS = {
         37: "Replicanti Sacrifice no longer resets Replicanti.",
         38: "Replicanti Growth is stronger based on Replicanti at a reduced rate.",
 
+        43: "Start with format(1e100) Replicanti.",
         47: "Why are you wanted to see Inflation? nope..."
     },
     checks: {
@@ -127,7 +134,14 @@ const ACHS = {
         37() { return player.rep_sacrifice.gte(1e3) },
         38() { return player.replicanti.gte("9.9999e999") },
 
+        41() { return player.chals.comps.includes("inf1") 
+        && player.chals.comps.includes("inf2") 
+        && player.chals.comps.includes("inf3") 
+        && player.chals.comps.includes("inf4") 
+        && player.chals.comps.includes("inf5") 
+        && player.chals.comps.includes("inf6") },
         42() { return player.prestige.points.gte(FORMS.INF) },
+        43() { return player.inf.best < 1 },
         47() { return player.replicanti.gte("ee4") },
     }
 }
