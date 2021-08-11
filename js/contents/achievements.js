@@ -54,6 +54,7 @@ const ACHS = {
         42: "Meta-Prestige",
         43: "Fastest life on life",
         44: "Dimensional Sacrifice",
+        45: "Hear about AD sound?",
         47: "No Inflation",
     },
     descs: {
@@ -90,6 +91,7 @@ const ACHS = {
         42: "Get format(1.798e308) Prestige points.",
         43: "Go Infinity in under one second.",
         44: "Complete Infinity challenge 2 without sacrifice Replicanti.",
+        45: "Buy Replicator Tier 1.",
         47: "Reach format(ee4) Replicanti.",
     },
     rewards: {
@@ -142,6 +144,7 @@ const ACHS = {
         && player.chals.comps.includes("inf6") },
         42() { return player.prestige.points.gte(FORMS.INF) },
         43() { return player.inf.best < 1 },
+        45() { return player.replicator.gens[1].bought.gte(1) },
         47() { return player.replicanti.gte("ee4") },
     }
 }

@@ -218,6 +218,12 @@ h3 {
 	animation: notify_anim 3s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
 }
 
+.gen_frame {
+	justify-content: space-between;
+	margin-bottom: 5px;
+	height: 40px;
+}
+
 @keyframes notify_anim {
 	0%, 100% {
 		opacity: 0.25;

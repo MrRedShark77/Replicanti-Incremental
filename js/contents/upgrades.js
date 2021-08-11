@@ -128,7 +128,7 @@ const UPGS = {
             effect() {
                 let ret = player.prestige.points.add(1).pow(2)
                 if (player.prestige.upgrades.includes(24)) ret = ret.pow(UPGS.prestige[24].effect())
-                return ret.softcap(1e40,1/3,0)
+                return ret.softcap(1e40,1/3,0).softcap('ee4',1/3,0)
             },
             effDesc(eff=this.effect()) { return "x"+format(eff)+" later" },
         },
@@ -364,9 +364,9 @@ const UPGS = {
         34: {
             unl() { return true },
             desc: "Infinity Compressors boosts Prestige points gain.",
-            cost: E(1e67),
+            cost: E(1e63),
             effect() {
-                let ret = E(10).pow(player.inf.comp.pow(1.5))
+                let ret = E(10).pow(player.inf.comp.pow(1.5).mul(2))
                 return ret
             },
             effDesc(eff=this.effect()) { return format(eff)+"x" },

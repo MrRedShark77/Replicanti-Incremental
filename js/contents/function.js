@@ -24,7 +24,7 @@ const FORMS = {
         penalty(x = player.replicanti) {
             if (x.lt(this.limit())) return E(1)
             let a = x.logBase(this.limit())
-            a = a.add(1).pow(a).pow(this.superPenalty())
+            a = a.add(1).pow(a).pow(this.superPenalty()).pow(this.hyperPenalty())
             if (player.prestige.upgrades.includes(13)) a = a.pow(0.75)
             if (player.chals.comps.includes("inf3")) a = a.pow(0.75)
             if (CHALS.onChal("normal1") || CHALS.onChal("inf1")) a = a.pow(1.5)
@@ -184,9 +184,14 @@ const FORMS = {
             FORMS.prestige.onReset(force)
         },
         replicanti: {
-            growth() { return UPGS.inf_rep[1].effect().root(FORMS.inf.comp.effect().nerf).pow(player.chals.comps.includes('inf1')?player.chals.comps.length*0.5+1:1) },
+            growth() {
+                let ret = UPGS.inf_rep[1].effect().root(FORMS.inf.comp.effect().nerf).pow(player.chals.comps.includes('inf1')?player.chals.comps.length*0.5+1:1)
+                if (player.replicator.unl) ret = ret.pow(FORMS.replicator.effect().ir1)
+                return ret
+            },
             effect() {
                 let ret = player.inf.replicanti.log10().div(this.cap().log10().max(1)).add(1).add(FORMS.inf.comp.effect().buff)
+                if (player.replicator.unl) ret = ret.mul(FORMS.replicator.effect().ir2)
                 if (!player.inf.upgrades.includes(24)) ret = ret.softcap(2,0.75,0)
                 if (CHALS.onChal("inf4")) return E(1)
                 return ret
@@ -212,6 +217,7 @@ const FORMS = {
                 if (ret.nerf.gte(25)) ret.nerf = ret.nerf.div(25).pow(2).mul(25)
                 if (player.inf.upgrades.includes(32)) ret.nerf = ret.nerf.pow(0.5)
                 ret.cap = E(10).pow(x.sub(9).max(0).pow(1.5))
+                if (ret.cap.gte(1e200)) ret.cap = ret.cap.div(1e200).pow(x.div(10).max(2).pow(1.5)).mul(1e200)
                 return ret
             },
         },
@@ -236,6 +242,36 @@ const FORMS = {
                 }
             },
             effect(x=player.inf.mults) { return E(2).pow(x) },
+        },
+    },
+    replicator: {
+        canUnl() { return player.inf.points.gte(1e64) && !player.replicator.unl },
+        unl() {
+            if (this.canUnl()) player.replicator.unl = true
+        },
+        growth() { return this.gen.growth(1) },
+        effect() {
+            let ret = {}
+            ret.ir1 = player.replicator.amount.log10().add(1).pow(2/3).softcap(30,0.5,0).softcap(150,0.5,0)
+            ret.ir2 = player.replicator.amount.log10().add(1).pow(1/3)
+            return ret
+        },
+        gen: {
+            exps: [1, 3, 6, 10],
+            growth(x) { return player.replicator.gens[x].amount.pow(this.power(x)) },
+            power(x, y=player.replicator.gens[x].bought) {
+                let ret = E(1.5).pow(y)
+                return ret
+            },
+            cost(x, y=player.replicator.gens[x].bought) { return E(10).pow(this.exps[x-1]).pow(y.pow(1.25)).mul(E(10).pow(this.exps[x-1]-1)).mul(1e64) },
+            can(x) { return player.inf.points.gte(this.cost(x)) },
+            buy(x) {
+                if (this.can(x)) {
+                    player.inf.points = player.inf.points.sub(this.cost(x))
+                    player.replicator.gens[x].bought = player.replicator.gens[x].bought.add(1)
+                    player.replicator.gens[x].amount = player.replicator.gens[x].amount.mul(1.01)
+                }
+            },
         },
     },
 }

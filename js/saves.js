@@ -32,6 +32,11 @@ function calc(dt) {
 
     if (player.chals.comps.includes("normal6")) player.prestige.points = player.prestige.points.add(FORMS.prestige.gain().mul(dt))
 
+    for (let x = 4; x >= 1; x--) {
+        if (x == 1) player.replicator.amount = player.replicator.amount.mul(FORMS.replicator.growth().pow(dt))
+        else player.replicator.gens[x-1].amount = player.replicator.gens[x-1].amount.mul(FORMS.replicator.gen.growth(x).pow(dt))
+    }
+
     AUTOS.update()
     ACHS.checkACHS()
 }
@@ -63,6 +68,11 @@ const PLAYER_DATA = {
         comp: E(0),
         upgrades: [],
     },
+    replicator: {
+        unl: false,
+        amount: E(1),
+        gens: {},
+    },
     achs: [],
     chals: {
         active: "",
@@ -78,6 +88,10 @@ function wipe() {
     for (let x = 1; x <= UPGS.replicanti.cols; x++) player.rep_upgs[x] = E(0)
     for (let x = 1; x <= UPGS.inf_rep.cols; x++) player.inf_rep_upgs[x] = E(0)
     for (let x = 1; x <= AUTOS.length; x++) player.autobuyer[AUTOS[x].id] = false
+    for (let x = 1; x <= 4; x++) player.replicator.gens[x] = {
+        bought: E(0),
+        amount: E(1),
+    }
 }
 
 function loadPlayer(load) {
@@ -124,6 +138,16 @@ function checkIfUndefined() {
 
         // Autobuyers
     for (let x = 1; x <= AUTOS.length; x++) if (player.autobuyer[AUTOS[x].id] == undefined) player.autobuyer[AUTOS[x].id] = false
+
+        // Replicator
+    for (let x = 0; x < Object.keys(data.replicator).length; x++) {
+        let key = Object.keys(data.replicator)[x]
+        if (player.replicator[key] === undefined) player.replicator[key] = data.replicator[key]
+    }
+    for (let x = 1; x <= 4; x++) if (player.replicator.gens[x] === undefined) player.replicator.gens[x] = {
+        bought: E(0),
+        amount: E(1),
+    }
 }
 
 function convertToExpNum() {
@@ -142,6 +166,12 @@ function convertToExpNum() {
     player.inf.mults = ex(player.inf.mults)
     player.inf.replicanti = ex(player.inf.replicanti)
     player.inf.comp = ex(player.inf.comp)
+
+    player.replicator.amount = ex(player.replicator.amount)
+    for (let x = 1; x <= 4; x++) {
+        player.replicator.gens[x].bought = ex(player.replicator.gens[x].bought)
+        player.replicator.gens[x].amount = ex(player.replicator.gens[x].amount)
+    }
 }
 
 function save(){

@@ -73,7 +73,7 @@ const CHALS = {
         },
     },
     inf: {
-        requires: [E('e1100'), E('e1350'), E('e2350'), E('e3800'), E('e10300'), E('e11500')],
+        requires: [E('e1100'), E('e1350'), E('e2350'), E('e3800'), E('e10200'), E('e11300')],
         canComplete() { return player.replicanti.gte(this[player.chals.active.split("inf")[1]].goal) },
         canUnlock() { return player.replicanti.gte(this.requires[player.chals.inf_unls]) },
         unlock() { if (this.canUnlock()) player.chals.inf_unls++ },
@@ -108,7 +108,7 @@ const CHALS = {
             reward: "Infinity points gain softcap is 50% weaker",
         },
         6: {
-            goal: E('e1450'),
+            goal: E('e1400'),
             desc: "You cannot buy Prestige upgrades except 1 and 2 row",
             reward: "Prestige points gain softcap is sightly weaker",
         },
