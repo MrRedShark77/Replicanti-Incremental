@@ -18,7 +18,7 @@ const ACHS = {
         for (let r = 1; r <= this.rows; r++) for (let c = 1; c <= this.cols; c++) if (this.checks[r*10+c] !== undefined ? this.checks[r*10+c]() : false) this.unl(r*10+c)
     },
     cols: 8,
-    rows: 4,
+    rows: 5,
 
     names: {
         0: "Placeholder",
@@ -55,7 +55,13 @@ const ACHS = {
         43: "Fastest life on life",
         44: "Dimensional Sacrifice",
         45: "Hear about AD sound?",
+        46: "God Grief",
         47: "No Inflation",
+        48: "Yes Inflation",
+
+        51: "mmm, delicious",
+        52: "EXE.exe has stopped working",
+        54: "Hardened Replicanti",
     },
     descs: {
         0: "Placeholder.",
@@ -92,7 +98,13 @@ const ACHS = {
         43: "Go Infinity in under one second.",
         44: "Complete Infinity challenge 2 without sacrifice Replicanti.",
         45: "Buy Replicator Tier 1.",
+        46: "Reach at least format(e2000) Replicanti without Replicanti Galaxies, Sacrifice.",
         47: "Reach format(ee4) Replicanti.",
+        48: "Reach format(ee6) Replicator.",
+
+        51: "Buy Replicator Tier 4.",
+        52: "Reach at least format(e4200) Replicanti without Replicanti Galaxies, Sacrifice while in Infinity challenge 1.",
+        54: "Reach at least format(ee4) Infinity Replicanti.",
     },
     rewards: {
         21: "Start with format(1e5) Replicanti.",
@@ -107,7 +119,11 @@ const ACHS = {
         38: "Replicanti Growth is stronger based on Replicanti at a reduced rate.",
 
         43: "Start with format(1e100) Replicanti.",
-        47: "Why are you wanted to see Inflation? nope..."
+        47: "Why are you wanted to see Inflation? nope...",
+        48: "Unlock Infinity Compressor Autobuyer.",
+
+        52: "Replicanti Galaxy & Sacrifice are 50% stronger.",
+        54: "Infinity Replicanti growth is 50% stronger.",
     },
     checks: {
         11() { return player.rep_upgs[2].gte(1) },
@@ -145,6 +161,12 @@ const ACHS = {
         42() { return player.prestige.points.gte(FORMS.INF) },
         43() { return player.inf.best < 1 },
         45() { return player.replicator.gens[1].bought.gte(1) },
+        46() { return player.replicanti.gte('e2000') && player.rep_galaxy.lte(0) && player.rep_sacrifice.lte(1) },
         47() { return player.replicanti.gte("ee4") },
+        48() { return player.replicator.amount.gte("ee6") },
+
+        51() { return player.replicator.gens[4].bought.gte(1) },
+        52() { return player.replicanti.gte('e4200') && player.rep_galaxy.lte(0) && player.rep_sacrifice.lte(1) && CHALS.onChal('inf1') },
+        54() { return player.inf.replicanti.gte('ee4') },
     }
 }

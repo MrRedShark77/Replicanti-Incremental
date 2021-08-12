@@ -3,8 +3,9 @@ const AUTOS = {
         for (let x = 1; x <= 4; x++) if (player.autobuyer[this[x].id]) UPGS.replicanti.max(x)
         if (player.autobuyer["auto_rg"]) FORMS.replicanti.galaxy.reset(true)
         if (player.autobuyer["auto_rsac"]) FORMS.replicanti.sacrifice.doSac()
+        if (player.autobuyer["auto_ic"]) FORMS.inf.comp.reset()
     },
-    length: 6,
+    length: 7,
     1: {
         dis: "Replicanti Storage autobuyer",
         id: "auto_rs",
@@ -46,5 +47,12 @@ const AUTOS = {
         unl() { return player.breakInf },
         see() { return player.chals.comps.includes("inf4") },
         see_desc: "Complete Infinity challenge 4 to unlock.",
+    },
+    7: {
+        dis: "Infinity Compressor autobuyer",
+        id: "auto_ic",
+        unl() { return player.breakInf },
+        see() { return ACHS.has(48) },
+        see_desc: `Get Achievement "Yes Inflation".`,
     },
 }

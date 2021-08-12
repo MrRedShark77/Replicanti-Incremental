@@ -88,6 +88,7 @@ const FORMS = {
                 if (player.prestige.upgrades.includes(34)) ret = ret.mul(UPGS.prestige[34].effect())
                 if (ACHS.has(22)) ret = ret.mul(1.5)
                 if (ACHS.has(24)) ret = ret.mul(1.25)
+                if (ACHS.has(52)) ret = ret.mul(1.5)
                 if (player.inf.upgrades.includes(21)) return ret.add(1).root(2)
                 return ret.add(1).root(3)
             },
@@ -100,8 +101,14 @@ const FORMS = {
 
         sacrifice: {
             unl() { return CHALS.onChal("inf2") || player.chals.comps.includes("inf2") },
-            before() { return player.replicanti.log10().add(1).pow(0.9).div(player.rep_sacrifice).max(1) },
-            set() { return player.rep_sacrifice.mul(this.before()) },
+            before() {
+                let a = player.replicanti.log10().add(1).pow(0.9).div(player.rep_sacrifice)
+                if (ACHS.has(52)) a = a.mul(1.5)
+                return a.max(1)
+            },
+            set() {
+                return player.rep_sacrifice.mul(this.before())
+            },
             can() { return this.before().gt(1) && !CHALS.onChal("inf5") },
             doSac() {
                 if (this.can()) {
@@ -148,6 +155,7 @@ const FORMS = {
             if (ACHS.has(28)) gain = gain.mul(2)
             if (player.inf.upgrades.includes(12)) gain = gain.mul(UPGS.post_inf[12].effect())
             if (player.inf.upgrades.includes(22)) gain = gain.mul(UPGS.post_inf[22].effect())
+            if (player.inf.upgrades.includes(41)) gain = gain.mul(UPGS.post_inf[41].effect())
             if (player.chals.comps.includes("inf4")) gain = gain.mul(E(2).pow(player.chals.comps.length))
             gain = gain.mul(this.mult.effect())
             return gain.softcap(1e17,player.chals.comps.includes("inf5")?0.75:0.5,0).floor()
@@ -187,6 +195,7 @@ const FORMS = {
             growth() {
                 let ret = UPGS.inf_rep[1].effect().root(FORMS.inf.comp.effect().nerf).pow(player.chals.comps.includes('inf1')?player.chals.comps.length*0.5+1:1)
                 if (player.replicator.unl) ret = ret.pow(FORMS.replicator.effect().ir1)
+                if (ACHS.has(54)) ret = ret.pow(1.5)
                 return ret
             },
             effect() {
@@ -252,7 +261,7 @@ const FORMS = {
         growth() { return this.gen.growth(1) },
         effect() {
             let ret = {}
-            ret.ir1 = player.replicator.amount.log10().add(1).pow(2/3).softcap(30,0.5,0).softcap(150,0.5,0)
+            ret.ir1 = player.replicator.amount.log10().add(1).pow(2/3).softcap(30,0.5,0).softcap(150,0.4,0).softcap(1000,0.3,0)
             ret.ir2 = player.replicator.amount.log10().add(1).pow(1/3)
             return ret
         },

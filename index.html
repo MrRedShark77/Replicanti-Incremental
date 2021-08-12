@@ -112,7 +112,7 @@
                     <button class="btn" onclick="if (confirm('You wanted to RESET your progress to new game?')) {wipe(); save(); location.reload()}">Hard Reset</button>
                     <button class="btn" onclick="exporty()">Export</button>
                     <button class="btn" onclick="importy()">Import</button><br><br>
-                    Replicanti Incremental Prototype v0.2.2 - made by MrRedShark77<br>
+                    Replicanti Incremental Prototype v0.2.2.1 - made by MrRedShark77<br>
                 </div><div v-if="player.tab[0] == 2" style="color: black;">
                     <div v-if="player.tab[1] == 0">
                         Your best Replicanti is {{ format(player.stats.best_rep) }}<br>
@@ -226,11 +226,12 @@
                                 Unlock Replicator.<br>Require: {{ format(1e64) }} Infinity points
                             </button><div v-if="player.replicator.unl">
                                 You have <h2>{{ format(player.replicator.amount) }}</h2> replicator, which boosts Infinity Replicanti growth by ^<h2>{{ format(FORMS.replicator.effect().ir1) }}</h2>, thier effect by <h2>{{ format(FORMS.replicator.effect().ir2) }}</h2>x<br>
-                                (x{{ format(FORMS.replicator.growth()) }}/s)<br><br>
+                                (x{{ format(FORMS.replicator.growth()) }}/s)<br>
+                                (+{{ format(FORMS.calc_OoM(FORMS.replicator.growth())) }} OoMs/s)<br><br>
                                 <div style="font-size: 15px; width: 100%;">
                                     <div class="table_center gen_frame" v-for="x in 4" v-if="x == 1 ? true : player.replicator.gens[x-1].bought.gte(1)">
                                         <div style="width: 250px; text-align: left; margin-left: 10px;">Replicator Tier {{ x }} ({{ format(player.replicator.gens[x].bought,0) }}) ^{{ format(FORMS.replicator.gen.power(x)) }}</div>
-                                        <div style="width: 250px; text-align: left;">{{ format(player.replicator.gens[x].amount) }} <span v-if="4 > x">(x{{ format(FORMS.replicator.gen.growth(x+1)) }})</span></div>
+                                        <div style="width: 250px; text-align: left;">{{ format(player.replicator.gens[x].amount) }} <span v-if="4 > x">(+{{ format(FORMS.calc_OoM(FORMS.replicator.gen.growth(x+1))) }} OoMs/s)</span></div>
                                         <button class="btn" v-bind:class="{locked: !FORMS.replicator.gen.can(x)}" @click="FORMS.replicator.gen.buy(x)" style="width: 250px; margin-right: 30px;">Cost: {{ format(FORMS.replicator.gen.cost(x)) }} IP</button>
                                     </div>
                                 </div>

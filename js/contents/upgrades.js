@@ -246,7 +246,7 @@ const UPGS = {
         1: {
             id: 1,
             title: "Infinity Replicanti Multiplier",
-            cost(x=player.inf_rep_upgs[this.id]) { return E(1.5).pow(x.pow(1.5)).floor() },
+            cost(x=player.inf_rep_upgs[this.id]) { return E(1.5).pow(x.pow(player.inf.upgrades.includes(42)?1.25:1.5)).floor() },
             effect(x=player.inf_rep_upgs[this.id]) {
                 let lvl = x
                 if (player.inf.upgrades.includes(32)) lvl = lvl.add(UPGS.post_inf[32].effect())
@@ -256,14 +256,14 @@ const UPGS = {
             desc(eff=this.effect()) { return `Multiple Infinity Replicanti growth by ${format(eff)}x.` },
             bulk(x=player.replicanti) {
                 if (x.lt(1)) return E(0)
-                let bulk = x.logBase(1.5).root(1.5).add(1).floor()
+                let bulk = x.logBase(1.5).root(player.inf.upgrades.includes(42)?1.25:1.5).add(1).floor()
                 return bulk
             },
         },
     },
     post_inf: {
         cols: 4,
-        rows: 3,
+        rows: 4,
         can(x) { return player.inf.points.gte(this[x].cost) && !player.inf.upgrades.includes(x) },
         buy(x) {
             if (this.can(x)) {
@@ -327,7 +327,9 @@ const UPGS = {
             cost: E(1e13),
             effect() {
                 let ret = player.replicanti
-                return ret.min("e5000")
+                if (!player.inf.upgrades.includes(44)) ret = ret.min("e5000")
+                else ret = ret.softcap('e5000',1/5,0)
+                return ret
             },
             effDesc(eff=this.effect()) { return format(eff)+"x later" },
         },
@@ -357,6 +359,7 @@ const UPGS = {
             cost: E(1e44),
             effect() {
                 let ret = player.prestige.points.add(1)
+                if (player.inf.upgrades.includes(43)) ret = ret.pow(UPGS.post_inf[43].effect())
                 return ret
             },
             effDesc(eff=this.effect()) { return format(eff)+"x later" },
@@ -366,10 +369,40 @@ const UPGS = {
             desc: "Infinity Compressors boosts Prestige points gain.",
             cost: E(1e63),
             effect() {
-                let ret = E(10).pow(player.inf.comp.pow(1.5).mul(2))
+                let ret = E(10).pow(player.inf.comp.pow(1.5).mul(2).softcap(1e3,0.5,0))
                 return ret
             },
             effDesc(eff=this.effect()) { return format(eff)+"x" },
+        },
+        41: {
+            unl() { return player.replicator.unl },
+            desc: "Replicator boosts Infinity points gain.",
+            cost: E(5e64),
+            effect() {
+                let ret = player.replicator.amount.log10().mul(2).add(1)
+                return ret.softcap(1e10,0.5,0)
+            },
+            effDesc(eff=this.effect()) { return format(eff)+"x" },
+        },
+        42: {
+            unl() { return player.replicator.unl },
+            desc: "Infinity Replicanti Multiplier cost scales weaker.",
+            cost: E(1e83),
+        },
+        43: {
+            unl() { return player.replicator.unl },
+            desc: "Infinity upgrade 11 be stronger by Replicator.",
+            cost: E(1e86),
+            effect() {
+                let ret = player.replicator.amount.log10().add(1).log10().add(1).root(3)
+                return ret
+            },
+            effDesc(eff=this.effect()) { return "^"+format(eff) },
+        },
+        44: {
+            unl() { return player.replicator.unl },
+            desc: "Infinity upgrade 7 softcaps instead of hardcaps.",
+            cost: E(1e120),
         },
     },
 }
