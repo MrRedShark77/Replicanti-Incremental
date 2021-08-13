@@ -128,7 +128,7 @@ const UPGS = {
             effect() {
                 let ret = player.prestige.points.add(1).pow(2)
                 if (player.prestige.upgrades.includes(24)) ret = ret.pow(UPGS.prestige[24].effect())
-                return ret.softcap(1e40,1/3,0).softcap('ee4',1/3,0)
+                return ret.softcap(1e40,1/3,0).softcap('ee4',1/3,0).softcap('e1.6e4',0.8,0,true)
             },
             effDesc(eff=this.effect()) { return "x"+format(eff)+" later" },
         },

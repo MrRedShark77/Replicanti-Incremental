@@ -7,12 +7,17 @@ function ex(x){
     return nx;
 }
 
-ExpantaNum.prototype.softcap = function (start,force,mode){
+ExpantaNum.prototype.softcap = function (start,force,mode,log=false){
     var x = this.clone()
+    start = E(start)
     if (x.lt(start)) return x
+    if (log) {
+        start = start.log10()
+        x = x.log10()
+    }
     if([0,"pow"].includes(mode)) x = x.div(start).pow(force).mul(start).min(x)
     if([1,"mul"].includes(mode)) x = x.sub(start).div(force).add(start).min(x)
-    return x
+    return log ? E(10).pow(x) : x
 }
 
 function calc(dt) {
