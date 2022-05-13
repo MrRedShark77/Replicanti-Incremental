@@ -48,7 +48,7 @@ const CHALS = {
         },
         2: {
             unl() { return true },
-            desc: "You cannot buy Replicanti Multiplier, and Replicanti growth starts 2x",
+            desc: "You cannot buy Replicanti Multiplier, and Replicanti growth starts 2x later",
             reward: "Unlock Replicanti Multiplier autobuyer",
         },
         3: {
@@ -58,7 +58,7 @@ const CHALS = {
         },
         4: {
             unl() { return true },
-            desc: "Repeated Replicanti boost Replicanti Multiplier/Power instead of Replicanti Storage, but Repeated Replicanti are 4x stronger",
+            desc: "Repeated Replicanti boosts Replicanti Multiplier/Power instead of Replicanti Storage, but Repeated Replicanti are 4x stronger",
             reward: "Unlock Repeated Replicanti autobuyer",
         },
         5: {
@@ -68,7 +68,7 @@ const CHALS = {
         },
         6: {
             unl() { return true },
-            desc: "Prestige points gain are raised by 0.85",
+            desc: "Prestige point gain is raised ^0.85",
             reward: "You gain 100% of your Prestige points gained on reset each second",
         },
     },
@@ -94,7 +94,7 @@ const CHALS = {
         },
         3: {
             goal: E('e640'),
-            desc: "Replicanti Penalty, Replicanti Slowdown is twice stronger",
+            desc: "Replicanti Penalty and Replicanti Slowdown are twice as strong",
             reward: "Replicanti Penalty is 25% weaker",
         },
         4: {
