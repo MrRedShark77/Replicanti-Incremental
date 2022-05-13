@@ -48,19 +48,19 @@
                 (x{{ format(FORMS.replicanti.growth()) }}/s)<br>
                 (+{{ format(FORMS.calc_OoM(FORMS.replicanti.growth())) }} OoMs/s)<br><br><div style="height: 70px">
                     <span v-if="FORMS.replicanti.penalty().gt(1)">
-                        Beyond <h3>{{ format(FORMS.replicanti.limit()) }}</h3> replicanti, make their growth is rooted by <h3>{{ format(FORMS.replicanti.penalty()) }}</h3>
+                        Beyond <h3>{{ format(FORMS.replicanti.limit()) }}</h3> replicanti, their growth is rooted by <h3>{{ format(FORMS.replicanti.penalty()) }}</h3>
                     </span><br><span v-if="FORMS.replicanti.superPenalty().gt(1)" style="color: darkred;">
-                        Beyond <h3 style="color: darkred;">{{ format(FORMS.replicanti.superLimit()) }}</h3> replicanti, make replicanti penalty is raised by <h3 style="color: darkred;">{{ format(FORMS.replicanti.superPenalty()) }}</h3>
+                        Beyond <h3 style="color: darkred;">{{ format(FORMS.replicanti.superLimit()) }}</h3> replicanti, replicanti penalty is raised <h3 style="color: darkred;">{{ format(FORMS.replicanti.superPenalty()) }}</h3>
                     </span><br><span v-if="FORMS.replicanti.hyperPenalty().gt(1)" style="color: #c70000;">
-                        Beyond <h3 style="color: #c70000;">{{ format(FORMS.replicanti.hyperLimit()) }}</h3> replicanti, make replicanti penalty/slowdown is raised by <h3 style="color: #c70000;">{{ format(FORMS.replicanti.hyperPenalty()) }}</h3>
+                        Beyond <h3 style="color: #c70000;">{{ format(FORMS.replicanti.hyperLimit()) }}</h3> replicanti, replicanti penalty/slowdown is raised <h3 style="color: #c70000;">{{ format(FORMS.replicanti.hyperPenalty()) }}</h3>
                     </span>
                 </div><br>
                 <div v-if="player.tab[0] == 0">
                     <div v-if="player.tab[1] == 0">
                         <div v-if="FORMS.inf.reached()">
-                            <h3>Beyond Replicanti, Replicanti growth cannot go beyond Infinity...</h3><br><br>
+                            <h3>Replicanti growth cannot go beyond Infinity...</h3><br><br>
                             <button class='btn inf' onclick="FORMS.inf.reset()">
-                                Go Infinity, but resets all previous features except achievements for being Infinity.
+                                Go Infinity, but resets all previous features except achievements for going Infinity.
                             </button>
                         </div><div v-else>
                             <button class='btn' onclick="UPGS.replicanti.buyMax()">Buy Max</button><br><br>
@@ -75,13 +75,13 @@
                                 <div style='min-width: 300px; margin: 5px;'>
                                     <div style='text-align: left;'><h3>{{ format(player.rep_galaxy, 0) }}</h3> Replicanti Galaxy</div><br>
                                     <button class='btn' v-bind:class="{locked: !FORMS.replicanti.galaxy.can()}" @click="FORMS.replicanti.galaxy.reset()">
-                                        Reset your Replicanti, but makes Replicanti upgrades is <b>{{ format(FORMS.replicanti.galaxy.effect()) }}x</b> stronger.
-                                        <br>Require: {{ format(FORMS.replicanti.galaxy.req()) }} replicanti
+                                        Reset your Replicanti, but makes Replicanti upgrades <b>{{ format(FORMS.replicanti.galaxy.effect()) }}x</b> stronger.
+                                        <br>Requires: {{ format(FORMS.replicanti.galaxy.req()) }} replicanti
                                     </button>
                                 </div><div style='min-width: 300px; margin: 5px;' v-if="FORMS.replicanti.sacrifice.unl()">
                                     <div style='text-align: left;'>Replicanti Sacrifice <b style="color: black">(^{{ format(player.rep_sacrifice) }})</b></div><br>
                                     <button class='btn' v-bind:class="{locked: !FORMS.replicanti.sacrifice.can()}" @click="FORMS.replicanti.sacrifice.doSac()">
-                                        Sacrifice your Replicanti, but makes Replicanti growth is <b>^{{ format(player.rep_sacrifice) }} -> ^{{ format(FORMS.replicanti.sacrifice.set()) }}</b> stonger.
+                                        Sacrifice your Replicanti, but Replicanti growth becomes <b>^{{ format(player.rep_sacrifice) }} -> ^{{ format(FORMS.replicanti.sacrifice.set()) }}</b> stonger.
                                     </button>
                                 </div>
                             </div>
@@ -117,9 +117,9 @@
                     <div v-if="player.tab[1] == 0">
                         Your best Replicanti is {{ format(player.stats.best_rep) }}<br>
                         Your fastest Replicanti growth is x{{ format(player.stats.fast_grow) }}/s<br>
-                        You played {{ format(player.time) }} seconds.<br><br>
+                        You have played for {{ format(player.time) }} seconds.<br><br>
                         <div v-if="player.inf.times.gte(1)">
-                            You have Infinitied in {{ format(player.inf.times, 0) }} times.<br>
+                            You have Infinitied {{ format(player.inf.times, 0) }} times.<br>
                             Your fastest Infinity in {{ format(player.inf.best) }} seconds.<br>
                             Your have spent {{ format(player.inf.time) }} seconds in this infinity.<br>
                         </div>
@@ -197,9 +197,9 @@
                                 <div style='min-width: 300px; margin: 5px;'>
                                     <div style='text-align: left;'><h3>{{ format(player.inf.comp, 0) }}</h3> Infinity Compressor</div><br>
                                     <button class='btn inf' v-bind:class="{locked: !FORMS.inf.comp.can()}" @click="FORMS.inf.comp.reset()">
-                                        Reset your Infinity Replicanti except thier upgrades, but adds <b>+{{ format(FORMS.inf.comp.effect().buff) }}</b> free base from Infinity Replicanti effect. Unfortunately, Infinity Replicanti growth is rooted by <b>{{ format(FORMS.inf.comp.effect().nerf) }}</b>.
+                                        Reset your Infinity Replicanti and keep thier upgrades, but add <b>+{{ format(FORMS.inf.comp.effect().buff) }}</b> free base from Infinity Replicanti effect. Unfortunately, Infinity Replicanti growth is rooted by <b>{{ format(FORMS.inf.comp.effect().nerf) }}</b>.
                                         <span v-if="FORMS.inf.comp.effect().cap.gt(1)"> And Infinity Replicanti cap is increased by <b>{{ format(FORMS.inf.comp.effect().cap) }}x</b>.</span>
-                                        <br>Require: Max of Infinity Replicanti
+                                        <br>Require: Maximum Infinity Replicanti
                                     </button>
                                 </div>
                             </div>
@@ -225,7 +225,7 @@
                             <button class='btn inf' v-if="!player.replicator.unl" v-bind:class="{locked: !FORMS.replicator.canUnl()}" onclick="FORMS.replicator.unl()">
                                 Unlock Replicator.<br>Require: {{ format(1e64) }} Infinity points
                             </button><div v-if="player.replicator.unl">
-                                You have <h2>{{ format(player.replicator.amount) }}</h2> replicator, which boosts Infinity Replicanti growth by ^<h2>{{ format(FORMS.replicator.effect().ir1) }}</h2>, thier effect by <h2>{{ format(FORMS.replicator.effect().ir2) }}</h2>x<br>
+                                You have <h2>{{ format(player.replicator.amount) }}</h2> replicator, which boosts Infinity Replicanti growth by ^<h2>{{ format(FORMS.replicator.effect().ir1) }}</h2>, and multiplies thier effect by <h2>{{ format(FORMS.replicator.effect().ir2) }}</h2>x<br>
                                 (x{{ format(FORMS.replicator.growth()) }}/s)<br>
                                 (+{{ format(FORMS.calc_OoM(FORMS.replicator.growth())) }} OoMs/s)<br><br>
                                 <div style="font-size: 15px; width: 100%;">

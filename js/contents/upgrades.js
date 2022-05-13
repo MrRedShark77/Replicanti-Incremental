@@ -28,7 +28,7 @@ const UPGS = {
                 let ret = E(2).mul(FORMS.replicanti.galaxy.effect()).mul(FORMS.inf.replicanti.effect()).softcap(10,1/2,0).mul(CHALS.onChal("normal4") || CHALS.onChal("inf1") ? 1 : UPGS.replicanti[4].effect()).pow(x)
                 return ret
             },
-            desc(eff=this.effect()) { return `Make Replicanti penalty starts ${format(eff)}x later.` },
+            desc(eff=this.effect()) { return `Replicanti penalty starts ${format(eff)}x later.` },
             bulk(x=player.replicanti) {
                 if (x.div(10).lt(1)) return E(0)
                 let bulk = x.div(10).logBase(2).root(1.5).add(1).floor()
@@ -45,7 +45,7 @@ const UPGS = {
                 if (player.prestige.upgrades.includes(12)) lvl = lvl.pow(UPGS.prestige[12].effect())
                 return lvl.div(5).add(1)
             },
-            desc(eff=this.effect()) { return `Multiple Replicanti growth by ${format(eff)}x.` },
+            desc(eff=this.effect()) { return `Replicanti growth is multiplied by ${format(eff)}x.` },
             bulk(x=player.replicanti) {
                 let bulk = x.logBase(10).root(1.5).root(CHALS.onChal("normal3") || CHALS.onChal("inf1")?2:1).add(1).floor()
                 return bulk
@@ -60,7 +60,7 @@ const UPGS = {
                 if (player.prestige.upgrades.includes(12)) lvl = lvl.pow(UPGS.prestige[12].effect())
                 return lvl.div(5).mul(FORMS.replicanti.galaxy.effect()).add(1).softcap(100,1/3,0).softcap(1000,1/3,0)
             },
-            desc(eff=this.effect()) { return `Make Replicanti growth is ^${format(eff)} stronger.` },
+            desc(eff=this.effect()) { return `Replicanti growth is raised ^${format(eff)}` },
             bulk(x=player.replicanti) {
                 if (x.div(1000).lt(1)) return E(0)
                 let bulk = x.div(1000).logBase(10).root(2).root(CHALS.onChal("normal3") || CHALS.onChal("inf1")?2:1).add(1).floor()
@@ -77,7 +77,7 @@ const UPGS = {
                 if (CHALS.onChal("normal4") || CHALS.onChal("inf1")) ret = ret.pow(4)
                 return ret
             },
-            desc(eff=this.effect()) { return `Make Replicanti Storage is ${format(eff)}x stronger based on replicanti.` },
+            desc(eff=this.effect()) { return `Make Replicanti Storage ${format(eff)}x stronger based on replicanti.` },
             bulk(x=player.replicanti) {
                 if (x.div(1e16).lt(1)) return E(0)
                 let bulk = x.div(1e16).logBase(10).root(2).add(1).floor()
@@ -98,7 +98,7 @@ const UPGS = {
         },
         11: {
             unl() { return true },
-            desc: "Replicanti Multiplier is twice effective.",
+            desc: "Replicanti Multiplier is twice as effective.",
             cost: E(1),
         },
         12: {
@@ -134,7 +134,7 @@ const UPGS = {
         },
         22: {
             unl() { return true },
-            desc: "Repeated Replicanti is twice stronger.",
+            desc: "Repeated Replicanti is twice as strong.",
             cost: E(2.5e3),
         },
         23: {
@@ -149,7 +149,7 @@ const UPGS = {
         },
         24: {
             unl() { return true },
-            desc: "Prestige upgrade 5 is raised by Replicanti Galaxy.",
+            desc: "Prestige upgrade 5 is raised to your Replicanti Galaxy count.",
             cost: E(5e5),
             effect() {
                 let ret = player.rep_galaxy.add(1).root(3)
@@ -253,7 +253,7 @@ const UPGS = {
                 if (player.inf.upgrades.includes(13)) lvl = lvl.mul(UPGS.post_inf[13].effect())
                 return lvl.mul(0.01).add(1)
             },
-            desc(eff=this.effect()) { return `Multiple Infinity Replicanti growth by ${format(eff)}x.` },
+            desc(eff=this.effect()) { return `Multiply Infinity Replicanti growth by ${format(eff)}x.` },
             bulk(x=player.replicanti) {
                 if (x.lt(1)) return E(0)
                 let bulk = x.logBase(1.5).root(player.inf.upgrades.includes(42)?1.25:1.5).add(1).floor()
@@ -283,7 +283,7 @@ const UPGS = {
         },
         12: {
             unl() { return true },
-            desc: "Infinity points is boosted by Prestige points.",
+            desc: "Infinity points are boosted by Prestige points.",
             cost: E(500),
             effect() {
                 let ret = player.prestige.points.add(1).log10().add(1)
@@ -313,7 +313,7 @@ const UPGS = {
         },
         22: {
             unl() { return FORMS.replicanti.sacrifice.unl() },
-            desc: "Replicanti Sacrifice boost Infinity points gain.",
+            desc: "Replicanti Sacrifice boosts Infinity points gain.",
             cost: E(5e9),
             effect() {
                 let ret = E(2).pow(player.rep_sacrifice.pow(0.3))
@@ -345,7 +345,7 @@ const UPGS = {
         },
         32: {
             unl() { return true },
-            desc: "Infinity Compressors adds free Infinity Replicanti Multipliers, and Infinity Compressor debuff is 50% weaker.",
+            desc: "Infinity Compressors add free Infinity Replicanti Multipliers, and Infinity Compressor debuff is 50% weaker.",
             cost: E(1e33),
             effect() {
                 let ret = player.inf.comp
@@ -366,7 +366,7 @@ const UPGS = {
         },
         34: {
             unl() { return true },
-            desc: "Infinity Compressors boosts Prestige points gain.",
+            desc: "Infinity Compressors boost Prestige points gain.",
             cost: E(1e63),
             effect() {
                 let ret = E(10).pow(player.inf.comp.pow(1.5).mul(2).softcap(1e3,0.5,0))
@@ -376,7 +376,7 @@ const UPGS = {
         },
         41: {
             unl() { return player.replicator.unl },
-            desc: "Replicator boosts Infinity points gain.",
+            desc: "Replicator boost Infinity points gain.",
             cost: E(5e64),
             effect() {
                 let ret = player.replicator.amount.log10().mul(2).add(1)
@@ -391,7 +391,7 @@ const UPGS = {
         },
         43: {
             unl() { return player.replicator.unl },
-            desc: "Infinity upgrade 11 be stronger by Replicator.",
+            desc: "Infinity upgrade 11 is made stronger by Replicator.",
             cost: E(1e86),
             effect() {
                 let ret = player.replicator.amount.log10().add(1).log10().add(1).root(3)
