@@ -73,4 +73,4 @@ function loop() {
     date = Date.now();
 }
 
-setInterval(loop, 50)
+setInterval(loop, 1)
