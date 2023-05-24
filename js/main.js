@@ -13,7 +13,7 @@ const ST_NAMES = [
 
 function format(ex, acc=4, style="sc") {
     ex = E(ex)
-    if (ex.isInfinite() || (ex.gte(FORMS.INF) && !player.breakInf)) return 'Infinity'
+    if (ex.isInfinite() || (ex.gte(FORMS.INF) && !player.breakInf)) return '∞'
     neg = ex.isNegative()?"-":""
     if (ex.isNegative()) ex = ex.mul(-1)
     let e = ex.log10().floor()
@@ -49,7 +49,7 @@ function format(ex, acc=4, style="sc") {
 /*
 function format(ex, acc=3) {
     ex = E(ex)
-    if (ex.isInfinite()) return 'Infinity'
+    if (ex.isInfinite()) return '∞'
     let e = ex.log10().floor()
     if (e.lt(9)) {
         if (e.lt(3)) {
@@ -73,4 +73,4 @@ function loop() {
     date = Date.now();
 }
 
-setInterval(loop, 50)
+setInterval(loop, 1)
